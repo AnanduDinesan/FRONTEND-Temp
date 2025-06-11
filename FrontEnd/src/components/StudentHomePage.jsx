@@ -11,18 +11,22 @@ const StudentHomePage = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (studentId) {
-      api
-        .get(`/students/${studentId}`)
-        .then((res) => {
+    const fetchStudentDetails = async () => {
+      if (studentId) {
+        try {
+          const res = await api.get('/students', {
+            params: { studentId }
+          }); 
           setStudentDetails(res.data);
           setError('');
-        })
-        .catch(() => {
+        } catch (error) {
           setError('Failed to fetch student details.');
-        });
-    }
+        }
+      }
+    };
+    fetchStudentDetails();
   }, [studentId]);
+
 
   return (
     <div className="student-dashboard">

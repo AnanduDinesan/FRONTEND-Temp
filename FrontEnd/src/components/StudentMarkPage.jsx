@@ -23,21 +23,20 @@ const StudentMarkPage = () => {
     ];
 
     useEffect(() => {
-    const fetchStudentDetails = async () => {
+    const fetchStudentMarks = async () => {
         if (studentId) {
         try {
-            const res = await api.get('/students', {
-            params: { studentId }
-            }); 
-            setStudentDetails(res.data);
+            const res = await api.get('/marks', {
+            params: { studentId, semester }
+            });
+            setMarks(res.data);
             setError('');
         } catch (error) {
-            setError('Failed to fetch student details.');
+            setError('Failed to fetch student Marks.');
         }
         }
     };
-
-    fetchStudentDetails(); // Call the async function
+    fetchStudentMarks();
     }, [studentId]);
 
 
