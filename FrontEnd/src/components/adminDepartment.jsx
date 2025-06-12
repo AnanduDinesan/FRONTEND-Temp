@@ -5,8 +5,8 @@ import Navbar from './adminNavbar';
 
 const Department = () => {
   const [formData, setFormData] = useState({
-    deptId: '',
-    deptName: ''
+    id: '',
+    name: ''
   });
 
   const handleChange = (e) => {
@@ -20,15 +20,16 @@ const Department = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.deptId || !formData.deptName) {
+    if (!formData.id || !formData.name) {
       alert('All fields are required');
       return;
     }
 
     try {
-      await api.post('/departments', formData);
+      const res = await api.post('/departments', formData);
+      console.log(res.data);
       alert('Department added successfully!');
-      setFormData({ deptId: '', deptName: '' });
+      setFormData({ id: '', name: '' });
     } catch (error) {
       console.error('Error adding department:', error);
       alert('Failed to add department. Please check the console.');
@@ -45,8 +46,8 @@ const Department = () => {
             <label>Department ID:</label>
             <input
               type="text"
-              name="deptId"
-              value={formData.deptId}
+              name="id"
+              value={formData.id}
               onChange={handleChange}
               required
             />
@@ -56,8 +57,8 @@ const Department = () => {
             <label>Department Name:</label>
             <input
               type="text"
-              name="deptName"
-              value={formData.deptName}
+              name="name"
+              value={formData.name}
               onChange={handleChange}
               required
             />
