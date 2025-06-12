@@ -26,9 +26,8 @@ const StudentMarkPage = () => {
     const fetchStudentMarks = async () => {
         if (studentId) {
         try {
-            const res = await api.get('/marks', {
-            params: { studentId, semester }
-            });
+            const res = await api.get(`marks/student/${studentId}`);
+            console.log(res.data);
             setMarks(res.data);
             setError('');
         } catch (error) {
@@ -75,11 +74,11 @@ const StudentMarkPage = () => {
                 <tbody>
                 {marks.map((mark, index) => (
                     <tr key={index}>
-                    <td>{mark.subject}</td>
-                    <td>{mark.exam1}</td>
-                    <td>{mark.exam2}</td>
-                    <td>{mark.semExam}</td>
-                    <td>{mark.exam1 + mark.exam2 + mark.semExam}</td>
+                    <td>{mark.subjectName}</td>
+                    <td>{mark.internal1}</td>
+                    <td>{mark.internal2}</td>
+                    <td>{mark.external}</td>
+                    <td>{mark.internal1 + mark.internal2 + mark.external}</td>
                     </tr>
                 ))}
                 </tbody>
