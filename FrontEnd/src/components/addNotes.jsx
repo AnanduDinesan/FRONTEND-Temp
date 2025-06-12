@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "../App.css";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 
 function AddNotes() {
   const [noteData, setNoteData] = useState({
@@ -12,14 +11,18 @@ function AddNotes() {
     pdfFile: null,
   });
 
-  // used for displaying subject from db
   const [subjects, setSubjects] = useState([]);
+  const [submittedNotes, setSubmittedNotes] = useState([]);
+  const [filterSemester, setFilterSemester] = useState("");
+  const [filterSubjectId, setFilterSubjectId] = useState("");
 
-  // used for storing subjects from db
+  const navigate = useNavigate();
+
+  // Fetch subjects
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const response = await fetch("https://localhost:5197/api/subjects");   //Get method is default
+        const response = await fetch("https://localhost:5197/api/subjects");
         if (!response.ok) throw new Error("Failed to fetch subjects.");
         const data = await response.json();
         setSubjects(data);
@@ -32,12 +35,11 @@ function AddNotes() {
     fetchSubjects();
   }, []);
 
-  const [submittedNotes, setSubmittedNotes] = useState([]);
-
+  // Fetch uploaded notes
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const response = await fetch("https://localhost:5197/api/notes"); // ✅ your backend endpoint
+        const response = await fetch("https://localhost:5197/api/notes");
         if (!response.ok) throw new Error("Failed to fetch notes");
         const data = await response.json();
         setSubmittedNotes(data);
@@ -48,8 +50,6 @@ function AddNotes() {
 
     fetchNotes();
   }, []);
-
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -71,46 +71,17 @@ function AddNotes() {
     }
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   if (!noteData.pdfFile) {
-  //     alert("Please upload a PDF file.");
-  //     return;
-  //   }
-
-  //   const fileURL = URL.createObjectURL(noteData.pdfFile);
-
-  //   setSubmittedNotes([
-  //     ...submittedNotes,
-  //     {
-  //       title: noteData.description,
-  //       subject: noteData.subjectId,
-  //       fileName: noteData.pdfFile.name,
-  //       fileURL: fileURL,
-  //     },
-  //   ]);
-
-  //   setNoteData({
-  //     description: "",
-  //     subjectId: "",
-  //     pdfFile: null,
-  //   });
-
-  //   document.getElementById("pdfUpload").value = "";
-  // };
-
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
+    if (!noteData.pdfFile || !noteData.subjectId || !noteData.description) {
+      alert("Please fill in all required fields and upload a PDF.");
+      return;
+    }
 
-  if (!noteData.pdfFile || !noteData.subjectId || !noteData.description) {
-    alert("Please fill in all required fields and upload a PDF.");
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append("pdfFile", noteData.pdfFile);
-  formData.append("subjectId", parseInt(noteData.subjectId));
-  formData.append("description", noteData.description);
+    const formData = new FormData();
+    formData.append("pdfFile", noteData.pdfFile);
+    formData.append("subjectId", parseInt(noteData.subjectId));
+    formData.append("description", noteData.description);
 
     try {
       const response = await fetch("https://localhost:5197/api/notes/upload", {
@@ -134,11 +105,28 @@ function AddNotes() {
       });
       document.getElementById("pdfUpload").value = "";
 
+      // Refresh the notes list
+      const updatedNotes = await fetch("https://localhost:5197/api/notes");
+      setSubmittedNotes(await updatedNotes.json());
     } catch (error) {
       console.error("Upload failed:", error);
       alert(`Upload failed: ${error.message}`);
     }
   };
+
+  // Get unique semesters from subjects
+  const uniqueSemesters = [...new Set(subjects.map((sub) => sub.semester))];
+
+  // Filter notes
+  const filteredNotes = submittedNotes.filter((note) => {
+    const matchSemester = filterSemester
+      ? note.subjects?.semester === parseInt(filterSemester)
+      : true;
+    const matchSubject = filterSubjectId
+      ? note.subjectId === parseInt(filterSubjectId)
+      : true;
+    return matchSemester && matchSubject;
+  });
 
   return (
     <div className="d-flex vh-100">
@@ -194,7 +182,6 @@ function AddNotes() {
                     onChange={handleChange}
                     required
                   >
-                    {/* add subject id to value and subject name to label */}
                     <option value="">-- Select Subject --</option>
                     {subjects.map((subject) => (
                       <option key={subject.id} value={subject.id}>
@@ -223,24 +210,56 @@ function AddNotes() {
             </div>
           </div>
 
+          {/* Filter Section */}
+          <div className="d-flex gap-3 my-4">
+            <div className="form-group">
+              <label className="fw-bold">Semester</label>
+              <select
+                  className="form-select"
+                  value={filterSemester}
+                  onChange={(e) => setFilterSemester(e.target.value)}
+                >
+                  <option value="">Semester 1</option>
+                  {[1, 2, 3, 4, 5, 6,7,8].map((sem) => (
+                    <option key={sem} value={sem}>{`Semester ${sem}`}</option>
+                  ))}
+                </select>
+            </div>
+
+            <div className="form-group">
+              <label className="fw-bold">Subject</label>
+              <select
+                className="form-select"
+                value={filterSubjectId}
+                onChange={(e) => setFilterSubjectId(e.target.value)}
+              >
+                <option value="">All Subjects</option>
+                {subjects.map((subj) => (
+                  <option key={subj.id} value={subj.id}>
+                    {subj.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
           {/* Uploaded Notes List */}
-          {submittedNotes.length > 0 && (
-            <div className="card shadow-sm mx-auto my-5 border-0 rounded-4" style={{ maxWidth: "800px" }}>
+          {filteredNotes.length > 0 ? (
+            <div className="card shadow-sm mx-auto my-4 border-0 rounded-4" style={{ maxWidth: "800px" }}>
               <div className="card-header bg-secondary text-white rounded-top-4">
                 <h5 className="mb-0">
-                  <i className="fas fa-file-pdf me-2"></i>Uploaded Notes
+                  <i className="fas fa-file-pdf me-2"></i>Filtered Uploaded Notes
                 </h5>
               </div>
               <ul className="list-group list-group-flush">
-                {submittedNotes.map((note, index) => (
+                {filteredNotes.map((note) => (
                   <li key={note.id} className="list-group-item d-flex justify-content-between align-items-center">
                     <div>
-                      <strong>{note.description}</strong> ({note.subjects?.name || "Unknown Subject"}) <br />
-                      <small className="text-muted">{note.pdfFile.split("/").pop()}</small>
+                      <strong>{note.description}</strong> ({note.subjects?.name || "Unknown Subject"}, Semester {note.subjects?.semester}) <br />
+                      <small className="text-muted">{note.pdfFile?.split("/").pop()}</small>
                     </div>
                     <a
-                      // may need to trim the pdf file path to make it without \uploads to get the pdf name stored in db
-                      href={`https://localhost:5197/api/notes/download/${note.pdfFile}`}    // GET: api/notes/download/abc123.pdf 
+                      href={`https://localhost:5197/api/notes/download/${note.pdfFile}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn btn-outline-primary btn-sm"
@@ -251,8 +270,9 @@ function AddNotes() {
                 ))}
               </ul>
             </div>
+          ) : (
+            <div className="alert alert-warning mt-4">No notes found for the selected filters.</div>
           )}
-
         </div>
       </main>
     </div>
