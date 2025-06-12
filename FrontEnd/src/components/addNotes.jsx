@@ -34,8 +34,7 @@ function AddNotes() {
 
   const [submittedNotes, setSubmittedNotes] = useState([]);
 
-  useEffect(() => {
-    const fetchNotes = async () => {
+  const fetchNotes = async () => {
       try {
         const response = await fetch("http://localhost:5197/api/notes"); // ✅ your backend endpoint
         if (!response.ok) throw new Error("Failed to fetch notes");
@@ -45,7 +44,8 @@ function AddNotes() {
         console.error("Error fetching notes:", error);
       }
     };
-
+  
+  useEffect(() => {
     fetchNotes();
   }, []);
 
@@ -70,34 +70,6 @@ function AddNotes() {
       alert("Please upload a valid PDF file.");
     }
   };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   if (!noteData.pdfFile) {
-  //     alert("Please upload a PDF file.");
-  //     return;
-  //   }
-
-  //   const fileURL = URL.createObjectURL(noteData.pdfFile);
-
-  //   setSubmittedNotes([
-  //     ...submittedNotes,
-  //     {
-  //       title: noteData.description,
-  //       subject: noteData.subjectId,
-  //       fileName: noteData.pdfFile.name,
-  //       fileURL: fileURL,
-  //     },
-  //   ]);
-
-  //   setNoteData({
-  //     description: "",
-  //     subjectId: "",
-  //     pdfFile: null,
-  //   });
-
-  //   document.getElementById("pdfUpload").value = "";
-  // };
 
   const handleSubmit = async (e) => {
   e.preventDefault();
@@ -127,18 +99,53 @@ function AddNotes() {
       alert("Note uploaded successfully!");
       console.log(result);
 
+      // ✅ Refresh the notes list after upload
+      fetchNotes();
+
+      // setSubmittedNotes([
+      //   ...submittedNotes,
+      //   {
+      //     description: noteData.description,
+      //     subjectId: noteData.subjectId,
+      //     pdfFile: noteData.pdfFile,
+      //   },
+      // ]);
+
       setNoteData({
         description: "",
         subjectId: "",
         pdfFile: null,
       });
       document.getElementById("pdfUpload").value = "";
-
+      
     } catch (error) {
       console.error("Upload failed:", error);
       alert(`Upload failed: ${error.message}`);
     }
   };
+
+  const handleDelete = async (noteId) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this note?");
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`http://localhost:5197/api/notes/${noteId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        alert("Note deleted successfully.");
+        // Optional: refresh the notes list
+        setSubmittedNotes(prev => prev.filter(note => note.id !== noteId));
+      } else {
+        alert("Failed to delete note.");
+      }
+    } catch (error) {
+      console.error("Error deleting note:", error);
+      alert("An error occurred while deleting.");
+    }
+  };
+
 
   return (
     <div className="d-flex vh-100">
@@ -252,6 +259,13 @@ function AddNotes() {
                     >
                       <i className="fas fa-download me-1"></i>Download
                     </a>
+                    <button
+                      onClick={() => handleDelete(note.id)}
+                      className="btn btn-outline-danger btn-sm ms-2"
+                    >
+                      <i className="fas fa-trash-alt me-1"></i>Delete
+                    </button>
+
                   </li>
                 ))}
               </ul>
