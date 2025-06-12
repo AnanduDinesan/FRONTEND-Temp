@@ -14,8 +14,8 @@ const StudentHomePage = () => {
     const fetchStudentDetails = async () => {
       if (studentId) {
         try {
-          const res = await api.get('/students', {
-            params: { studentId }
+          const res = await api.get(`/user/${studentId}`, {
+            // params: { studentId }
           }); 
           setStudentDetails(res.data);
           setError('');

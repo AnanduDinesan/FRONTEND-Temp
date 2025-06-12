@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import '../styling/LoginPage.css';
+import 'jwt-decode'
+import { jwtDecode } from 'jwt-decode';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -18,6 +20,8 @@ const LoginPage = () => {
       console.log(response.data);
       const { role, name, id, departmentId} = response.data;
       localStorage.setItem('jwt',response.data.token);
+      const user =jwtDecode(response.data.token); 
+      console.log("user data : "+user);
       localStorage.setItem('user', JSON.stringify({ id, name, role, email,  departmentId }));
 
       if (role === 'admin') navigate('/admin');
