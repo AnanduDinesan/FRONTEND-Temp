@@ -1,10 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "../App.css";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import api from "../api";
 
 function AddNotes() {
   const [noteData, setNoteData] = useState({
@@ -13,18 +11,21 @@ function AddNotes() {
     pdfFile: null,
   });
 
-  // used for displaying subject from db
   const [subjects, setSubjects] = useState([]);
+  const [submittedNotes, setSubmittedNotes] = useState([]);
 
-  // used for storing subjects from db
+  const [filterSemester, setFilterSemester] = useState("");
+  const [filterSubjectId, setFilterSubjectId] = useState("");
+
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const response = await api.get("subjects");   //Get method is default
-        console.log(response.data);
-        // if (!response.ok) throw new Error("Failed to fetch subjects.");
-        // const data = await response.json();
-        setSubjects(response.data);
+        const response = await fetch("http://localhost:5197/api/subjects");
+        if (!response.ok) throw new Error("Failed to fetch subjects.");
+        const data = await response.json();
+        setSubjects(data);
       } catch (err) {
         console.error(err);
         alert("Unable to load subjects.");
@@ -34,24 +35,20 @@ function AddNotes() {
     fetchSubjects();
   }, []);
 
-  const [submittedNotes, setSubmittedNotes] = useState([]);
+  const fetchNotes = async () => {
+    try {
+      const response = await fetch("http://localhost:5197/api/notes");
+      if (!response.ok) throw new Error("Failed to fetch notes");
+      const data = await response.json();
+      setSubmittedNotes(data);
+    } catch (error) {
+      console.error("Error fetching notes:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchNotes = async () => {
-      try {
-        const response = await api.get("notes"); // ✅ your backend endpoint
-        if (!response.ok) throw new Error("Failed to fetch notes");
-        const data = await response.json();
-        setSubmittedNotes(data);
-      } catch (error) {
-        console.error("Error fetching notes:", error);
-      }
-    };
-
     fetchNotes();
   }, []);
-
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -73,49 +70,21 @@ function AddNotes() {
     }
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   if (!noteData.pdfFile) {
-  //     alert("Please upload a PDF file.");
-  //     return;
-  //   }
-
-  //   const fileURL = URL.createObjectURL(noteData.pdfFile);
-
-  //   setSubmittedNotes([
-  //     ...submittedNotes,
-  //     {
-  //       title: noteData.description,
-  //       subject: noteData.subjectId,
-  //       fileName: noteData.pdfFile.name,
-  //       fileURL: fileURL,
-  //     },
-  //   ]);
-
-  //   setNoteData({
-  //     description: "",
-  //     subjectId: "",
-  //     pdfFile: null,
-  //   });
-
-  //   document.getElementById("pdfUpload").value = "";
-  // };
-
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!noteData.pdfFile || !noteData.subjectId || !noteData.description) {
-    alert("Please fill in all required fields and upload a PDF.");
-    return;
-  }
+    if (!noteData.pdfFile || !noteData.subjectId || !noteData.description) {
+      alert("Please fill in all required fields and upload a PDF.");
+      return;
+    }
 
-  const formData = new FormData();
-  formData.append("pdfFile", noteData.pdfFile);
-  formData.append("subjectId", parseInt(noteData.subjectId));
-  formData.append("description", noteData.description);
+    const formData = new FormData();
+    formData.append("pdfFile", noteData.pdfFile);
+    formData.append("subjectId", parseInt(noteData.subjectId));
+    formData.append("description", noteData.description);
 
     try {
-      const response = await fetch("https://localhost:5197/api/notes/upload", {
+      const response = await fetch("http://localhost:5197/api/notes/upload", {
         method: "POST",
         body: formData,
       });
@@ -125,9 +94,8 @@ function AddNotes() {
         throw new Error(errorText);
       }
 
-      const result = await response.json();
       alert("Note uploaded successfully!");
-      console.log(result);
+      fetchNotes();
 
       setNoteData({
         description: "",
@@ -135,12 +103,44 @@ function AddNotes() {
         pdfFile: null,
       });
       document.getElementById("pdfUpload").value = "";
-
     } catch (error) {
       console.error("Upload failed:", error);
       alert(`Upload failed: ${error.message}`);
     }
   };
+
+  const handleDelete = async (noteId) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this note?");
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`http://localhost:5197/api/notes/${noteId}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        alert("Note deleted successfully.");
+        setSubmittedNotes((prev) => prev.filter((note) => note.id !== noteId));
+      } else {
+        alert("Failed to delete note.");
+      }
+    } catch (error) {
+      console.error("Error deleting note:", error);
+      alert("An error occurred while deleting.");
+    }
+  };
+
+  const uniqueSemesters = [...new Set(subjects.map((sub) => sub.semester))];
+
+  const filteredNotes = submittedNotes.filter((note) => {
+    const matchSemester = filterSemester
+      ? note.subjects?.semester === parseInt(filterSemester)
+      : true;
+    const matchSubject = filterSubjectId
+      ? note.subjectId === parseInt(filterSubjectId)
+      : true;
+    return matchSemester && matchSubject;
+  });
 
   return (
     <div className="d-flex vh-100">
@@ -196,7 +196,6 @@ function AddNotes() {
                     onChange={handleChange}
                     required
                   >
-                    {/* add subject id to value and subject name to label */}
                     <option value="">-- Select Subject --</option>
                     {subjects.map((subject) => (
                       <option key={subject.id} value={subject.id}>
@@ -225,36 +224,83 @@ function AddNotes() {
             </div>
           </div>
 
-          {/* Uploaded Notes List */}
-          {submittedNotes.length > 0 && (
-            <div className="card shadow-sm mx-auto my-5 border-0 rounded-4" style={{ maxWidth: "800px" }}>
+          {/* Filter Section */}
+          <div className="d-flex gap-3 my-4">
+            <div className="form-group">
+              <label className="fw-bold">Semester</label>
+              <select
+                className="form-select"
+                value={filterSemester}
+                onChange={(e) => setFilterSemester(e.target.value)}
+              >
+                <option value="">All Semesters</option>
+                {uniqueSemesters.map((sem) => (
+                  <option key={sem} value={sem}>Semester {sem}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label className="fw-bold">Subject</label>
+              <select
+                className="form-select"
+                value={filterSubjectId}
+                onChange={(e) => setFilterSubjectId(e.target.value)}
+              >
+                <option value="">All Subjects</option>
+                {subjects.map((subj) => (
+                  <option key={subj.id} value={subj.id}>
+                    {subj.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Filtered Notes */}
+          {filteredNotes.length > 0 ? (
+            <div className="card shadow-sm mx-auto my-4 border-0 rounded-4" style={{ maxWidth: "800px" }}>
               <div className="card-header bg-secondary text-white rounded-top-4">
                 <h5 className="mb-0">
                   <i className="fas fa-file-pdf me-2"></i>Uploaded Notes
                 </h5>
               </div>
               <ul className="list-group list-group-flush">
-                {submittedNotes.map((note, index) => (
+                {filteredNotes.map((note) => (
                   <li key={note.id} className="list-group-item d-flex justify-content-between align-items-center">
                     <div>
-                      <strong>{note.description}</strong> ({note.subjects?.name || "Unknown Subject"}) <br />
-                      <small className="text-muted">{note.pdfFile.split("/").pop()}</small>
+                      <strong>{note.description}</strong> ({note.subjects?.name || "Unknown Subject"}, Semester {note.subjects?.semester}) <br />
+                      <small className="text-muted">{note.pdfFile?.split("/").pop()}</small>
                     </div>
-                    <a
-                      // may need to trim the pdf file path to make it without \uploads to get the pdf name stored in db
-                      href={`https://localhost:5197/api/notes/download/${note.pdfFile}`}    // GET: api/notes/download/abc123.pdf 
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-outline-primary btn-sm"
-                    >
-                      <i className="fas fa-eye me-1"></i>View
-                    </a>
+                    <div className="d-flex">
+                      <a
+                        href={`http://localhost:5197/api/notes/view/${note.pdfFile}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn btn-outline-primary btn-sm"
+                      >
+                        <i className="fas fa-eye me-1"></i>View
+                      </a>
+                      <a
+                        href={`http://localhost:5197/api/notes/download/${note.pdfFile}`}
+                        className="btn btn-outline-success btn-sm ms-2"
+                      >
+                        <i className="fas fa-download me-1"></i>Download
+                      </a>
+                      <button
+                        onClick={() => handleDelete(note.id)}
+                        className="btn btn-outline-danger btn-sm ms-2"
+                      >
+                        <i className="fas fa-trash-alt me-1"></i>Delete
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>
             </div>
+          ) : (
+            <div className="alert alert-warning mt-4">No notes found for the selected filters.</div>
           )}
-
         </div>
       </main>
     </div>
