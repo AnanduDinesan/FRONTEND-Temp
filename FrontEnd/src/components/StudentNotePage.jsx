@@ -6,6 +6,7 @@ import '../styling/StudentNotePage.css';
 const StudentNotePage = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const departmentId = user?.departmentId;
+  // const departmentId = 2;    //used for static testing
 
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState('');
@@ -16,7 +17,7 @@ const StudentNotePage = () => {
     const fetchSubjects = async () => {
         if (departmentId) {
         try {
-            const res = await api.get('/subjects', { params: { departmentId } });
+            const res = await api.get(`/Subjects/dept/${departmentId}`);
             setSubjects(res.data);
         } catch (err) {
             setError('Error fetching subjects.');
@@ -29,14 +30,23 @@ const StudentNotePage = () => {
   useEffect(() => {
     const fetchNotes = async () => {
         if (selectedSubject) {
-        try {
-            const res = await api.get('/notes', { params: { subject: selectedSubject } });
+          try {
+              const res = await api.get(`/notes/filter?subjectId=${selectedSubject}`);
+              setNotes(res.data);
+              setError('');
+          } catch (err) {
+              setNotes([]);
+              setError('No notes found for the selected subject.');
+          }
+        }else{
+          try{
+            const res = await api.get(`/notes/dept/${departmentId}`);
             setNotes(res.data);
-            setError('');
-        } catch (err) {
-            setNotes([]);
-            setError('No notes found for the selected subject.');
-        }
+              setError('');
+          } catch (err) {
+              setNotes([]);
+              setError('No notes found.');
+          }
         }
     };
     fetchNotes();
@@ -55,7 +65,7 @@ const StudentNotePage = () => {
         >
           <option value="">Select Subject</option>
           {subjects.map((subj) => (
-            <option key={subj.id} value={subj.name}>
+            <option key={subj.id} value={subj.id}>
               {subj.name}
             </option>
           ))}
@@ -67,9 +77,24 @@ const StudentNotePage = () => {
           <ul className="notes-list">
             {notes.map((note, index) => (
               <li key={index} className="note-item">
-                <p><strong>{note.subject}</strong> - {new Date(note.postedDate).toLocaleDateString()}</p>
-                <a href={note.link} target="_blank" rel="noopener noreferrer" download>
-                  Download
+                <div>
+                  <strong>{note.description}</strong> ({note.subjects?.name || "Unknown Subject"}) <br />
+                  <small className="text-muted">{note.pdfFile}</small>
+                </div>
+                <p><strong>{note.subject}</strong> {new Date(note.postedDate).toLocaleDateString()}</p>
+                <a
+                  href={`http://localhost:5197/api/notes/view/${note.pdfFile}`}    // GET: api/notes/view/abc123.pdf 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-outline-primary btn-sm"
+                >
+                <i className="fas fa-eye me-1"></i>View
+                </a>
+                <a
+                  href={`http://localhost:5197/api/notes/download/${note.pdfFile}`}
+                  className="btn btn-outline-success btn-sm ms-2"
+                >
+                 <i className="fas fa-download me-1"></i>Download
                 </a>
               </li>
             ))}
