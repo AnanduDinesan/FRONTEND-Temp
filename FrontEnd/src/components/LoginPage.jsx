@@ -14,9 +14,10 @@ const LoginPage = () => {
     setError('');
 
     try {
-      const response = await api.post('/login', { email, password });
+      const response = await api.post('auth/login', { email, password });
+      console.log(response.data);
       const { role, name, id, departmentId} = response.data;
-
+      localStorage.setItem('jwt',response.data.token);
       localStorage.setItem('user', JSON.stringify({ id, name, role, email,  departmentId }));
 
       if (role === 'admin') navigate('/admin');
@@ -24,6 +25,7 @@ const LoginPage = () => {
       else if (role === 'student') navigate('/student');
       else setError('Invalid user role.');
     } catch (err) {
+      console.log(err);
       setError('Invalid email or password.');
     }
   };

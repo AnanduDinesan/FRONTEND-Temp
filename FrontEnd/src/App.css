@@ -1,4 +1,4 @@
-/* Global styles */
+/* Global styles
 body {
   font-family: 'Segoe UI', sans-serif;
   margin: 0;
@@ -179,7 +179,7 @@ button.upload {
 
 button.upload:hover {
   background-color: #27ae60;
-}
+} */
 
 /* Breadcrumb */
 .breadcrumb {
