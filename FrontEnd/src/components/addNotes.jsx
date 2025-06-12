@@ -239,7 +239,8 @@ function AddNotes() {
                       <small className="text-muted">{note.pdfFile.split("/").pop()}</small>
                     </div>
                     <a
-                      href={`https://localhost:5197/api/notes/download/${note.pdfFile}`}
+                      // may need to trim the pdf file path to make it without \uploads to get the pdf name stored in db
+                      href={`https://localhost:5197/api/notes/download/${note.pdfFile}`}    // GET: api/notes/download/abc123.pdf 
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn btn-outline-primary btn-sm"
