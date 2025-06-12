@@ -3,82 +3,128 @@ import '../styling/adminShowDetails.css';
 import Navbar from './adminNavbar';
 
 const ShowDetails = () => {
-  // Dummy Users
   const users = [
     { id: 'U001', name: 'Alice', email: 'alice@example.com', role: 'student', deptid: 'CSE' },
     { id: 'U002', name: 'Bob', email: 'bob@example.com', role: 'teacher', deptid: 'ECE' },
   ];
 
-  // Dummy Departments
   const departments = [
     { deptId: 'CSE', deptName: 'Computer Science' },
     { deptId: 'ECE', deptName: 'Electronics and Communication' }
   ];
 
-  // Dummy Subjects
   const subjects = [
     { id: 'S101', name: 'Data Structures', deptId: 'CSE', semesterId: '3' },
     { id: 'S102', name: 'Circuits', deptId: 'ECE', semesterId: '2' }
   ];
 
-  const [showUsers, setShowUsers] = useState(false);
-  const [showDepartments, setShowDepartments] = useState(false);
-  const [showSubjects, setShowSubjects] = useState(false);
+  const [selectedType, setSelectedType] = useState('');
+
+  const renderTable = () => {
+    if (selectedType === 'users') {
+      return (
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Department</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user, index) => (
+              <tr key={index}>
+                <td>{user.id}</td>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>{user.role}</td>
+                <td>{user.deptid}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      );
+    } else if (selectedType === 'departments') {
+      return (
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Department ID</th>
+              <th>Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {departments.map((dept, index) => (
+              <tr key={index}>
+                <td>{dept.deptId}</td>
+                <td>{dept.deptName}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      );
+    } else if (selectedType === 'subjects') {
+      return (
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Subject ID</th>
+              <th>Name</th>
+              <th>Department</th>
+              <th>Semester</th>
+            </tr>
+          </thead>
+          <tbody>
+            {subjects.map((sub, index) => (
+              <tr key={index}>
+                <td>{sub.id}</td>
+                <td>{sub.name}</td>
+                <td>{sub.deptId}</td>
+                <td>{sub.semesterId}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      );
+    }
+    return null;
+  };
 
   return (
     <>
       <Navbar />
       <div className="show-details-container">
-        <h2>Show Details</h2>
+        <h2 className="show-details-header">Show Details</h2>
 
-        <div className="horizontal-sections">
-          {/* Users */}
-          <div className="section">
-            <button onClick={() => setShowUsers(!showUsers)}>
-              {showUsers ? 'Hide Users' : 'Show Users'}
-            </button>
-            {showUsers && (
-              <div className="data-list">
-                {users.map((user, index) => (
-                  <div key={index}>
-                    ID: {user.id}, Name: {user.name}, Role: {user.role}, Email: {user.email}, Dept: {user.deptid}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+        <div className="section">
+          <label htmlFor="dataSelector" style={{ fontWeight: 'bold', fontSize: '16px' }}>Select Category:</label>
+          <select
+            id="dataSelector"
+            value={selectedType}
+            onChange={(e) => setSelectedType(e.target.value)}
+            style={{
+              padding: '10px',
+              fontSize: '16px',
+              marginTop: '10px',
+              borderRadius: '8px',
+              border: '1px solid #ccc',
+              width: '100%',
+              marginBottom: '20px',
+            }}
+          >
+            <option value="">-- Choose an option --</option>
+            <option value="users">Users</option>
+            <option value="departments">Departments</option>
+            <option value="subjects">Subjects</option>
+          </select>
 
-          {/* Departments */}
-          <div className="section">
-            <button onClick={() => setShowDepartments(!showDepartments)}>
-              {showDepartments ? 'Hide Departments' : 'Show Departments'}
-            </button>
-            {showDepartments && (
-              <div className="data-list">
-                {departments.map((dept, index) => (
-                  <div key={index}>
-                    Dept ID: {dept.deptId}, Name: {dept.deptName}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Subjects */}
-          <div className="section">
-            <button onClick={() => setShowSubjects(!showSubjects)}>
-              {showSubjects ? 'Hide Subjects' : 'Show Subjects'}
-            </button>
-            {showSubjects && (
-              <div className="data-list">
-                {subjects.map((sub, index) => (
-                  <div key={index}>
-                    Subject ID: {sub.id}, Name: {sub.name}, Dept: {sub.deptId}, Semester: {sub.semesterId}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          {selectedType && (
+            <div className="data-table-container">
+              {renderTable()}
+            </div>
+          )}
         </div>
       </div>
     </>
