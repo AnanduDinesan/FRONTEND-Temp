@@ -13,21 +13,23 @@ function UploadMarks() {
     internal2: "",
     external: "",
   });
-  const [subjects,setSubjects] = useState([]);
-  useEffect(()=>{
-    const fetchSubjects = async ()=>{
-      try{
-        const res = await api.get('subjects');
-        console.log(res.data);
+
+  const [subjects, setSubjects] = useState([]);
+  const [submittedData, setSubmittedData] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      try {
+        const res = await api.get("subjects");
+        console.log("Subjects fetched:", res.data);
         setSubjects(res.data);
-      }catch(error){
-        console.log(error)
+      } catch (error) {
+        console.error("Error fetching subjects:", error);
       }
     };
     fetchSubjects();
-  },[]);
-  const [submittedData, setSubmittedData] = useState([]);
-  const navigate = useNavigate();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,16 +39,40 @@ function UploadMarks() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmittedData([...submittedData, formData]);
-    setFormData({
-      subject: "",
-      userId: "",
-      internal1: "",
-      internal2: "",
-      external: "",
-    });
+
+    // Get the selected subject object
+    const selectedSubject = subjects.find((s) => s.name === formData.subject);
+    if (!selectedSubject) {
+      alert("Invalid subject selected.");
+      return;
+    }
+
+    const payload = {
+      subjectId: selectedSubject.id,
+      userId: Number(formData.userId),
+      internal1: Number(formData.internal1),
+      internal2: Number(formData.internal2),
+      external: Number(formData.external),
+    };
+
+    try {
+      const response = await api.post("/marks", payload);
+      console.log("Saved successfully:", response.data);
+
+      setSubmittedData([...submittedData, { ...formData }]);
+      setFormData({
+        subject: "",
+        userId: "",
+        internal1: "",
+        internal2: "",
+        external: "",
+      });
+    } catch (error) {
+      console.error("Error saving marks:", error);
+      alert("Failed to submit marks. Please try again.");
+    }
   };
 
   return (
@@ -91,10 +117,11 @@ function UploadMarks() {
                     required
                   >
                     <option value="">-- Select Subject --</option>
-                    <option value="Mathematics">Mathematics</option>
-                    <option value="Science">Science</option>
-                    <option value="English">English</option>
-                    <option value="Computer">Computer</option>
+                    {subjects.map((subject) => (
+                      <option key={subject.id} value={subject.name}>
+                        {subject.name} (Sem {subject.semester}, {subject.department?.name})
+                      </option>
+                    ))}
                   </select>
                 </div>
 
