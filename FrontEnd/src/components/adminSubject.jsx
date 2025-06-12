@@ -1,24 +1,37 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useEffect, useState } from 'react';
 import '../styling/adminSubject.css';
 import Navbar from './adminNavbar';
+import api from '../api';
 
 const Subject = () => {
   const [formData, setFormData] = useState({
     id: '',
     name: '',
-    deptId: '',
-    semesterId: ''
+    departmentId: '',
+    semester: ''
   });
 
   // Static department data
-  const departments = [
-    { deptId: 'CSE', deptName: 'Computer Science' },
-    { deptId: 'ECE', deptName: 'Electronics and Communication' },
-    { deptId: 'ME', deptName: 'Mechanical Engineering' },
-    { deptId: 'CE', deptName: 'Civil Engineering' }
-  ];
+  // const departments1 = [
+  //   { departmentId: 'CSE', deptName: 'Computer Science' },
+  //   { departmentId: 'ECE', deptName: 'Electronics and Communication' },
+  //   { departmentId: 'ME', deptName: 'Mechanical Engineering' },
+  //   { departmentId: 'CE', deptName: 'Civil Engineering' }
+  // ];
+  const [departments,setDepartments] = useState([]);
+  useEffect(()=>{
+    const fetchDepartments = async ()=>{
+      try{
+        const res = await api.get('departments');
+        console.log(res.data);
+        setDepartments(res.data);
 
+      }catch(err){
+        console.log("Error:"+err)
+      }
+    };
+    fetchDepartments();
+  },[]);
   // Static semester list
   const semesters = [
     { id: '1', name: 'Semester 1' },
@@ -44,20 +57,21 @@ const Subject = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.id || !formData.name || !formData.deptId || !formData.semesterId) {
+    if (!formData.id || !formData.name || !formData.departmentId || !formData.semester) {
       alert("Please fill all fields.");
       return;
     }
 
     try {
-      await axios.post("http://localhost:8080/api/subjects", formData);
+      const res = await api.post("/subjects", formData);
+      console.log(res);
       alert("Subject added successfully!");
 
       setFormData({
         id: '',
         name: '',
-        deptId: '',
-        semesterId: ''
+        departmentId: '',
+        semester: ''
       });
     } catch (err) {
       console.error("Error adding subject:", err);
@@ -83,11 +97,11 @@ const Subject = () => {
 
           <div className="form-group">
             <label>Department:</label>
-            <select name="deptId" value={formData.deptId} onChange={handleChange} required>
+            <select name="departmentId" value={formData.departmentId} onChange={handleChange} required>
               <option value="">Select Department</option>
               {departments.map(dept => (
-                <option key={dept.deptId} value={dept.deptId}>
-                  {dept.deptName}
+                <option key={dept.id} value={dept.id}>
+                  {dept.name}
                 </option>
               ))}
             </select>
@@ -95,7 +109,7 @@ const Subject = () => {
 
           <div className="form-group">
             <label>Semester:</label>
-            <select name="semesterId" value={formData.semesterId} onChange={handleChange} required>
+            <select name="semester" value={formData.semester} onChange={handleChange} required>
               <option value="">Select Semester</option>
               {semesters.map(sem => (
                 <option key={sem.id} value={sem.id}>

@@ -17,6 +17,7 @@ const StudentHomePage = () => {
           const res = await api.get(`/user/${studentId}`, {
             // params: { studentId }
           }); 
+          // console.log(res.data);
           setStudentDetails(res.data);
           setError('');
         } catch (error) {
@@ -39,7 +40,7 @@ const StudentHomePage = () => {
           <div className="student-info-card">
             <p><strong>Name:</strong> {studentDetails.name}</p>
             <p><strong>Email:</strong> {studentDetails.email}</p>
-            <p><strong>Department:</strong> {studentDetails.departmentName}</p>
+            <p><strong>Department:</strong> {studentDetails.department.name}</p>
             <p><strong>Role:</strong> {studentDetails.role}</p>
           </div>
         )}

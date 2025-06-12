@@ -22,7 +22,11 @@ function AddNotes() {
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
+<<<<<<< HEAD
         const response = await fetch("https://localhost:5197/api/subjects");
+=======
+        const response = await fetch("http://localhost:5197/api/subjects");   //Get method is default
+>>>>>>> 9cea18d528b4437158fa461ded596f6057d4b29c
         if (!response.ok) throw new Error("Failed to fetch subjects.");
         const data = await response.json();
         setSubjects(data);
@@ -35,11 +39,19 @@ function AddNotes() {
     fetchSubjects();
   }, []);
 
+<<<<<<< HEAD
   // Fetch uploaded notes
   useEffect(() => {
     const fetchNotes = async () => {
       try {
         const response = await fetch("https://localhost:5197/api/notes");
+=======
+  const [submittedNotes, setSubmittedNotes] = useState([]);
+
+  const fetchNotes = async () => {
+      try {
+        const response = await fetch("http://localhost:5197/api/notes"); // ✅ your backend endpoint
+>>>>>>> 9cea18d528b4437158fa461ded596f6057d4b29c
         if (!response.ok) throw new Error("Failed to fetch notes");
         const data = await response.json();
         setSubmittedNotes(data);
@@ -47,7 +59,8 @@ function AddNotes() {
         console.error("Error fetching notes:", error);
       }
     };
-
+  
+  useEffect(() => {
     fetchNotes();
   }, []);
 
@@ -84,7 +97,7 @@ function AddNotes() {
     formData.append("description", noteData.description);
 
     try {
-      const response = await fetch("https://localhost:5197/api/notes/upload", {
+      const response = await fetch("http://localhost:5197/api/notes/upload", {
         method: "POST",
         body: formData,
       });
@@ -98,22 +111,39 @@ function AddNotes() {
       alert("Note uploaded successfully!");
       console.log(result);
 
+      // ✅ Refresh the notes list after upload
+      fetchNotes();
+
+      // setSubmittedNotes([
+      //   ...submittedNotes,
+      //   {
+      //     description: noteData.description,
+      //     subjectId: noteData.subjectId,
+      //     pdfFile: noteData.pdfFile,
+      //   },
+      // ]);
+
       setNoteData({
         description: "",
         subjectId: "",
         pdfFile: null,
       });
       document.getElementById("pdfUpload").value = "";
+<<<<<<< HEAD
 
       // Refresh the notes list
       const updatedNotes = await fetch("https://localhost:5197/api/notes");
       setSubmittedNotes(await updatedNotes.json());
+=======
+      
+>>>>>>> 9cea18d528b4437158fa461ded596f6057d4b29c
     } catch (error) {
       console.error("Upload failed:", error);
       alert(`Upload failed: ${error.message}`);
     }
   };
 
+<<<<<<< HEAD
   // Get unique semesters from subjects
   const uniqueSemesters = [...new Set(subjects.map((sub) => sub.semester))];
 
@@ -127,6 +157,30 @@ function AddNotes() {
       : true;
     return matchSemester && matchSubject;
   });
+=======
+  const handleDelete = async (noteId) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this note?");
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`http://localhost:5197/api/notes/${noteId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        alert("Note deleted successfully.");
+        // Optional: refresh the notes list
+        setSubmittedNotes(prev => prev.filter(note => note.id !== noteId));
+      } else {
+        alert("Failed to delete note.");
+      }
+    } catch (error) {
+      console.error("Error deleting note:", error);
+      alert("An error occurred while deleting.");
+    }
+  };
+
+>>>>>>> 9cea18d528b4437158fa461ded596f6057d4b29c
 
   return (
     <div className="d-flex vh-100">
@@ -259,13 +313,30 @@ function AddNotes() {
                       <small className="text-muted">{note.pdfFile?.split("/").pop()}</small>
                     </div>
                     <a
+<<<<<<< HEAD
                       href={`https://localhost:5197/api/notes/download/${note.pdfFile}`}
+=======
+                      href={`http://localhost:5197/api/notes/view/${note.pdfFile}`}    // GET: api/notes/view/abc123.pdf 
+>>>>>>> 9cea18d528b4437158fa461ded596f6057d4b29c
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn btn-outline-primary btn-sm"
                     >
                       <i className="fas fa-eye me-1"></i>View
                     </a>
+                    <a
+                      href={`http://localhost:5197/api/notes/download/${note.pdfFile}`}
+                      className="btn btn-outline-success btn-sm ms-2"
+                    >
+                      <i className="fas fa-download me-1"></i>Download
+                    </a>
+                    <button
+                      onClick={() => handleDelete(note.id)}
+                      className="btn btn-outline-danger btn-sm ms-2"
+                    >
+                      <i className="fas fa-trash-alt me-1"></i>Delete
+                    </button>
+
                   </li>
                 ))}
               </ul>

@@ -8,7 +8,7 @@ import StudentNotePage from "./components/StudentNotePage";
 
 import HomePage from "./components/HomePage";
 import UploadMarks from "./components/UploadMarks";
-import AddNotes from "./components/AddNotes";
+import AddNotes from "./components/addNotes";
 
 import Department from './components/adminDepartment';
 import User from './components/adminUseradd';
