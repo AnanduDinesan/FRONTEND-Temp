@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "../App.css";
+import api from "../api";
 import { useNavigate } from "react-router-dom";
 
 function UploadMarks() {
@@ -12,7 +13,19 @@ function UploadMarks() {
     internal2: "",
     external: "",
   });
-
+  const [subjects,setSubjects] = useState([]);
+  useEffect(()=>{
+    const fetchSubjects = async ()=>{
+      try{
+        const res = await api.get('subjects');
+        console.log(res.data);
+        setSubjects(res.data);
+      }catch(error){
+        console.log(error)
+      }
+    };
+    fetchSubjects();
+  },[]);
   const [submittedData, setSubmittedData] = useState([]);
   const navigate = useNavigate();
 
