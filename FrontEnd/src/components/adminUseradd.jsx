@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import api from '../api'; // ✅ using your api instance with baseURL
 import '../styling/adminUseradd.css'; 
-import Navbar from './adminNavbar'; // ✅ Navbar imported locally
+import Navbar from './adminNavbar';
 
 function User() {
   const [formData, setFormData] = useState({
@@ -8,17 +9,26 @@ function User() {
     name: '',
     email: '',
     role: '',
-    deptid: '',
+    departmentId: '',
     password: ''
   });
 
-  const departments = [
-    { deptId: 'CSE', deptName: 'Computer Science' },
-    { deptId: 'ECE', deptName: 'Electronics and Communication' },
-    { deptId: 'ME', deptName: 'Mechanical Engineering' },
-    { deptId: 'CE', deptName: 'Civil Engineering' }
-  ];
+  const [departments, setDepartments] = useState([]);
 
+  // Fetch departments from backend
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const res = await api.get('/departments'); // ✅ Matches your baseURL + endpoint
+        setDepartments(res.data);
+      } catch (err) {
+        console.error("Error fetching departments:", err);
+      }
+    };
+    fetchDepartments();
+  }, []);
+
+  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -27,30 +37,40 @@ function User() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  // Handle form submission
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.id || !formData.name || !formData.email || !formData.role || !formData.deptid || !formData.password) {
+    const { id, name, email, role, departmentId, password } = formData;
+
+    if (!id || !name || !email || !role || !departmentId || !password) {
       alert("Please fill all fields.");
       return;
     }
 
-    console.log("Submitted user data:", formData);
-    alert("User created successfully!");
+    try {
+      const res = await api.post("/User/add", formData);
+      console.log(res);
+      alert("user added successfully!");
 
-    setFormData({
-      id: '',
-      name: '',
-      email: '',
-      role: '',
-      deptid: '',
-      password: ''
-    });
+      // Reset form
+      setFormData({
+        id: '',
+        name: '',
+        email: '',
+        role: '',
+        departmentId: '',
+        password: ''
+      });
+    } catch (err) {
+      console.error("Error creating user:", err);
+      alert("Failed to create user.");
+    }
   };
 
   return (
     <>
-    <Navbar />
+      <Navbar />
       <div className="user-container">
         <h2>Create User</h2>
         <form onSubmit={handleSubmit}>
@@ -81,11 +101,11 @@ function User() {
 
           <div className="form-group">
             <label>Department:</label>
-            <select name="deptid" value={formData.deptid} onChange={handleChange} required>
+            <select name="departmentId" value={formData.departmentId} onChange={handleChange} required>
               <option value="">Select Department</option>
               {departments.map(dept => (
-                <option key={dept.deptId} value={dept.deptId}>
-                  {dept.deptName}
+                <option key={dept.id} value={dept.id}>
+                  {dept.name}
                 </option>
               ))}
             </select>
@@ -99,11 +119,13 @@ function User() {
           <button type="submit">Create User</button>
         </form>
       </div>
-      </>
+    </>
   );
 }
 
 export default User;
+
+
 
 
 

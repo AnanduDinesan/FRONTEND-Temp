@@ -1,22 +1,53 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../styling/adminShowDetails.css';
 import Navbar from './adminNavbar';
+import api from '../api'; 
 
 const ShowDetails = () => {
-  const users = [
-    { id: 'U001', name: 'Alice', email: 'alice@example.com', role: 'student', deptid: 'CSE' },
-    { id: 'U002', name: 'Bob', email: 'bob@example.com', role: 'teacher', deptid: 'ECE' },
-  ];
+  const [users,setUsers] =useState([])
+   useEffect(() => {
+    const fetchuser = async () => {
+      try{
+        const res=await api.get('/User/all');
+        setUsers(res.data);
+      }
+      catch(err)
+      {
+        console.error('error in fecting the users',err);
+      }
+    };
+    fetchuser();
 
-  const departments = [
-    { deptId: 'CSE', deptName: 'Computer Science' },
-    { deptId: 'ECE', deptName: 'Electronics and Communication' }
-  ];
+   },[]);
 
-  const subjects = [
-    { id: 'S101', name: 'Data Structures', deptId: 'CSE', semesterId: '3' },
-    { id: 'S102', name: 'Circuits', deptId: 'ECE', semesterId: '2' }
-  ];
+  const [departments,setDepartments]=useState([]);
+  useEffect(() => {
+    const fetchDepartments =async () =>{
+      try{
+        const res=await api.get('departments');
+        setDepartments(res.data);
+      }
+            catch(err)
+      {
+        console.error('error in fecting the users',err);
+      }
+    };
+    fetchDepartments();
+  },[]);
+  const [subjects,setsubject]=useState([]);
+  useEffect(() => {
+    const fetchsubject = async() =>{
+      try {
+        const res=await api.get('/Subjects');
+        setsubject(res.data);
+      }
+      catch(err)
+      {
+        console.error('error in fectching the subject',err);
+      }
+    };
+    fetchsubject();
+  },[]);
 
   const [selectedType, setSelectedType] = useState('');
 
@@ -40,7 +71,7 @@ const ShowDetails = () => {
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.role}</td>
-                <td>{user.deptid}</td>
+                <td>{user.department.name}</td>
               </tr>
             ))}
           </tbody>
@@ -58,8 +89,8 @@ const ShowDetails = () => {
           <tbody>
             {departments.map((dept, index) => (
               <tr key={index}>
-                <td>{dept.deptId}</td>
-                <td>{dept.deptName}</td>
+                <td>{dept.id}</td>
+                <td>{dept.name}</td>
               </tr>
             ))}
           </tbody>
@@ -79,10 +110,10 @@ const ShowDetails = () => {
           <tbody>
             {subjects.map((sub, index) => (
               <tr key={index}>
-                <td>{sub.id}</td>
-                <td>{sub.name}</td>
-                <td>{sub.deptId}</td>
-                <td>{sub.semesterId}</td>
+              <td>{sub.id}</td>
+              <td>{sub.name}</td>           
+              <td>{sub.department?.name}</td>
+              <td>{sub.semester}</td>
               </tr>
             ))}
           </tbody>
