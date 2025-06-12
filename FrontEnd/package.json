@@ -14,11 +14,7 @@
     "axios": "^1.9.0",
     "bootstrap": "^5.3.6",
     "frontend": "file:",
-<<<<<<< HEAD
-
     "init": "^0.1.2",
-=======
->>>>>>> 9cea18d528b4437158fa461ded596f6057d4b29c
     "jwt-decode": "^4.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
