@@ -70,7 +70,7 @@ function AddNotes() {
           <i className="fas fa-user-tie me-2"></i>Teacher Panel
         </h4>
         <nav className="nav flex-column">
-          <button className="btn text-start text-white mb-2 sidebar-link" onClick={() => navigate("/")}>
+          <button className="btn text-start text-white mb-2 sidebar-link" onClick={() => navigate("/homePage")}>
             <i className="fas fa-home me-2"></i>Home
           </button>
           <button className="btn text-start text-white mb-2 sidebar-link" onClick={() => navigate("/uploadMarks")}>
