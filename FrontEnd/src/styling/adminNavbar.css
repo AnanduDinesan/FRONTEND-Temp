@@ -1,0 +1,229 @@
+/* src/components/styles/Navbar.css */
+
+/* Base Styles */
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    box-sizing: border-box;
+    background-color: #f8fafc;
+    color: #2c3e50;
+}
+
+*, *::before, *::after {
+    box-sizing: inherit;
+}
+
+/* Top Navigation Bar */
+.top-navbar {
+    background-color: #2c3e50;
+    padding: 0 30px;
+    width: 100%;
+    height: 70px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1100;
+}
+
+.top-navbar-brand {
+    color: white;
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.top-nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 20px;
+}
+
+.top-nav-button {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    gap: 8px;
+}
+
+.top-nav-button:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.top-nav-button.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    font-weight: 600;
+}
+
+/* Dashboard Navigation */
+.dashboard-navbar {
+    background-color: #1a365d;
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    top: 70px;
+    left: 0;
+    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    padding: 30px 0;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.dashboard-nav-header {
+    color: white;
+    padding: 0 25px 20px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 20px;
+}
+
+.dashboard-nav-list {
+    list-style: none;
+    padding: 0 15px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.dashboard-nav-button {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    gap: 12px;
+    margin: 0 10px;
+}
+
+.dashboard-nav-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    transform: translateX(5px);
+}
+
+.dashboard-nav-button.active {
+    background-color: #4CAF50;
+    color: white;
+    font-weight: 600;
+}
+
+.dashboard-nav-button svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Main Content Area */
+.main-content-area {
+    margin-left: 250px;
+    padding-top: 70px;
+    min-height: 100vh;
+    background-color: #f8fafc;
+    transition: all 0.3s ease;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    .dashboard-navbar {
+        width: 220px;
+    }
+    
+    .main-content-area {
+        margin-left: 220px;
+    }
+}
+
+@media (max-width: 768px) {
+    .top-navbar {
+        height: 60px;
+        padding: 0 20px;
+    }
+    
+    .dashboard-navbar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        top: 0;
+        padding: 15px;
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .dashboard-nav-header {
+        display: none;
+    }
+    
+    .dashboard-nav-list {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .dashboard-nav-button {
+        padding: 10px 15px;
+        margin: 0;
+    }
+    
+    .dashboard-nav-button:hover {
+        transform: translateY(-2px);
+    }
+    
+    .main-content-area {
+        margin-left: 0;
+        padding-top: 60px;
+    }
+}
+
+@media (max-width: 576px) {
+    .top-navbar {
+        flex-direction: column;
+        height: auto;
+        padding: 10px;
+    }
+    
+    .top-nav-list {
+        margin-top: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    .top-nav-button {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+    
+    .dashboard-nav-list {
+        gap: 6px;
+    }
+    
+    .dashboard-nav-button {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+}
