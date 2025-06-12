@@ -6,9 +6,10 @@ import '../styling/StudentMarkPage.css';
 const StudentMarkPage = () => {
     const user = JSON.parse(localStorage.getItem('user'));
     const studentId = user?.id;
-    
-    const [semester, setSemester] = useState('');
+
+    const [semester, setSemester] = useState(1);
     const [marks, setMarks] = useState([]);
+    const [semesterTotal, setSemesterTotal] = useState(null);
     const [error, setError] = useState('');
 
     const semesterOptions = [
@@ -23,70 +24,79 @@ const StudentMarkPage = () => {
     ];
 
     useEffect(() => {
-    const fetchStudentMarks = async () => {
-        if (studentId) {
-        try {
-            const res = await api.get(`marks/student/${studentId}`);
-            console.log(res.data);
-            setMarks(res.data);
-            setError('');
-        } catch (error) {
-            setError('Failed to fetch student Marks.');
-        }
-        }
-    };
-    fetchStudentMarks();
-    }, [studentId]);
-
+        const fetchStudentMarks = async () => {
+            if (studentId && semester !== '') {
+                try {
+                    const res = await api.get(`marks/student/${studentId}/semester/${semester}`);
+                    console.log(res.data);
+                    setMarks(res.data.subjects || []);
+                    setSemesterTotal(res.data.semesterTotal || null);
+                    setError('');
+                } catch (error) {
+                    setError('No marks found for this semester.');
+                    setMarks([]);
+                    setSemesterTotal(null);
+                }
+            }
+        };
+        fetchStudentMarks();
+    }, [studentId, semester]);
 
     return (
-    <div className="student-dashboard">
-        <Sidebar />
-        <div className="mark-page-container">
-        <h2>Your Marks</h2>
-        <select
-            className="semester-select"
-            value={semester}
-            onChange={(e) => setSemester(e.target.value)}
-        >
-            <option value="">---Select Semester---</option>
-            {semesterOptions.map((sem) => (
-            <option key={sem.value} value={sem.value}>
-                {sem.label}
-            </option>
-            ))}
-        </select>
+        <div className="student-dashboard">
+            <Sidebar />
+            <div className="mark-page-container">
+                <h2>Your Marks</h2>
 
-        {error && <p className="error-text">{error}</p>}
+                <select
+                    className="semester-select"
+                    value={semester}
+                    onChange={(e) => setSemester(Number(e.target.value))}
+                >
+                    <option value="">---Select Semester---</option>
+                    {semesterOptions.map((sem) => (
+                        <option key={sem.value} value={sem.value}>
+                            {sem.label}
+                        </option>
+                    ))}
+                </select>
 
-        {marks.length > 0 && (
-            <div className="marks-table">
-            <table>
-                <thead>
-                <tr>
-                    <th>Subject</th>
-                    <th>Internal 1</th>
-                    <th>Internal 2</th>
-                    <th>External</th>
-                    <th>Total Mark</th>
-                </tr>
-                </thead>
-                <tbody>
-                {marks.map((mark, index) => (
-                    <tr key={index}>
-                    <td>{mark.subjectName}</td>
-                    <td>{mark.internal1}</td>
-                    <td>{mark.internal2}</td>
-                    <td>{mark.external}</td>
-                    <td>{mark.internal1 + mark.internal2 + mark.external}</td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
+                {error && <p className="error-text">{error}</p>}
+
+                {marks.length > 0 && (
+                    <div className="marks-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Internal 1</th>
+                                    <th>Internal 2</th>
+                                    <th>External</th>
+                                    <th>Total Mark</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {marks.map((mark, index) => (
+                                    <tr key={index}>
+                                        <td>{mark.subjectName}</td>
+                                        <td>{mark.internal1}</td>
+                                        <td>{mark.internal2}</td>
+                                        <td>{mark.external}</td>
+                                        <td>{mark.internal1 + mark.internal2 + mark.external}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+
+                {semesterTotal !== null && (
+                    <div className="semester-total">
+                        <p>Total Marks for Semester {semester}: <strong>{semesterTotal}</strong></p>
+                    </div>
+                )}
             </div>
-        )}
         </div>
-    </div>
     );
 };
 
