@@ -5,7 +5,10 @@ import "../App.css";
 import { useNavigate } from "react-router-dom";
 
 function AddNotes() {
+  const user = JSON.parse(localStorage.getItem('user'));
+  const userId = user?.id;
   const [noteData, setNoteData] = useState({
+    userId: userId,
     description: "",
     subjectId: "",
     pdfFile: null,
@@ -13,15 +16,14 @@ function AddNotes() {
 
   const [subjects, setSubjects] = useState([]);
   const [submittedNotes, setSubmittedNotes] = useState([]);
-
   const [filterSemester, setFilterSemester] = useState("");
   const [filterSubjectId, setFilterSubjectId] = useState("");
-
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
+        console.log("user id :"+userId);
         const response = await fetch("http://localhost:5197/api/subjects");
         if (!response.ok) throw new Error("Failed to fetch subjects.");
         const data = await response.json();
@@ -31,24 +33,26 @@ function AddNotes() {
         alert("Unable to load subjects.");
       }
     };
+    const fetchNotes = async () => {
+      try {
+        const response = await fetch(`http://localhost:5197/api/notes/teacher/${userId}`);
+        if (!response.ok) throw new Error("Failed to fetch notes");
+        const data = await response.json();
+        setSubmittedNotes(data);
+      } catch (error) {
+        console.error("Error fetching notes:", error);
+      }
+    };
+    fetchNotes()
 
     fetchSubjects();
   }, []);
 
-  const fetchNotes = async () => {
-    try {
-      const response = await fetch("http://localhost:5197/api/notes");
-      if (!response.ok) throw new Error("Failed to fetch notes");
-      const data = await response.json();
-      setSubmittedNotes(data);
-    } catch (error) {
-      console.error("Error fetching notes:", error);
-    }
-  };
+  
 
-  useEffect(() => {
-    fetchNotes();
-  }, []);
+  // useEffect(() => {
+  //   fetchNotes();
+  // }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -82,6 +86,7 @@ function AddNotes() {
     formData.append("pdfFile", noteData.pdfFile);
     formData.append("subjectId", parseInt(noteData.subjectId));
     formData.append("description", noteData.description);
+    formData.append("userId", noteData.userId);
 
     try {
       const response = await fetch("http://localhost:5197/api/notes/upload", {
