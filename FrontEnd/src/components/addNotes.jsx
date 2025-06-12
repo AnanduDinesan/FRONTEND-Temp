@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "../App.css";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function AddNotes() {
   const [noteData, setNoteData] = useState({
@@ -11,22 +12,14 @@ function AddNotes() {
     pdfFile: null,
   });
 
+  // used for displaying subject from db
   const [subjects, setSubjects] = useState([]);
-  const [submittedNotes, setSubmittedNotes] = useState([]);
-  const [filterSemester, setFilterSemester] = useState("");
-  const [filterSubjectId, setFilterSubjectId] = useState("");
 
-  const navigate = useNavigate();
-
-  // Fetch subjects
+  // used for storing subjects from db
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-<<<<<<< HEAD
-        const response = await fetch("https://localhost:5197/api/subjects");
-=======
-        const response = await fetch("http://localhost:5197/api/subjects");   //Get method is default
->>>>>>> 9cea18d528b4437158fa461ded596f6057d4b29c
+        const response = await fetch("https://localhost:5197/api/subjects");   //Get method is default
         if (!response.ok) throw new Error("Failed to fetch subjects.");
         const data = await response.json();
         setSubjects(data);
@@ -39,19 +32,12 @@ function AddNotes() {
     fetchSubjects();
   }, []);
 
-<<<<<<< HEAD
-  // Fetch uploaded notes
+  const [submittedNotes, setSubmittedNotes] = useState([]);
+
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const response = await fetch("https://localhost:5197/api/notes");
-=======
-  const [submittedNotes, setSubmittedNotes] = useState([]);
-
-  const fetchNotes = async () => {
-      try {
-        const response = await fetch("http://localhost:5197/api/notes"); // ✅ your backend endpoint
->>>>>>> 9cea18d528b4437158fa461ded596f6057d4b29c
+        const response = await fetch("https://localhost:5197/api/notes"); // ✅ your backend endpoint
         if (!response.ok) throw new Error("Failed to fetch notes");
         const data = await response.json();
         setSubmittedNotes(data);
@@ -59,10 +45,11 @@ function AddNotes() {
         console.error("Error fetching notes:", error);
       }
     };
-  
-  useEffect(() => {
+
     fetchNotes();
   }, []);
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -84,20 +71,49 @@ function AddNotes() {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!noteData.pdfFile || !noteData.subjectId || !noteData.description) {
-      alert("Please fill in all required fields and upload a PDF.");
-      return;
-    }
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   if (!noteData.pdfFile) {
+  //     alert("Please upload a PDF file.");
+  //     return;
+  //   }
 
-    const formData = new FormData();
-    formData.append("pdfFile", noteData.pdfFile);
-    formData.append("subjectId", parseInt(noteData.subjectId));
-    formData.append("description", noteData.description);
+  //   const fileURL = URL.createObjectURL(noteData.pdfFile);
+
+  //   setSubmittedNotes([
+  //     ...submittedNotes,
+  //     {
+  //       title: noteData.description,
+  //       subject: noteData.subjectId,
+  //       fileName: noteData.pdfFile.name,
+  //       fileURL: fileURL,
+  //     },
+  //   ]);
+
+  //   setNoteData({
+  //     description: "",
+  //     subjectId: "",
+  //     pdfFile: null,
+  //   });
+
+  //   document.getElementById("pdfUpload").value = "";
+  // };
+
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!noteData.pdfFile || !noteData.subjectId || !noteData.description) {
+    alert("Please fill in all required fields and upload a PDF.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("pdfFile", noteData.pdfFile);
+  formData.append("subjectId", parseInt(noteData.subjectId));
+  formData.append("description", noteData.description);
 
     try {
-      const response = await fetch("http://localhost:5197/api/notes/upload", {
+      const response = await fetch("https://localhost:5197/api/notes/upload", {
         method: "POST",
         body: formData,
       });
@@ -111,76 +127,18 @@ function AddNotes() {
       alert("Note uploaded successfully!");
       console.log(result);
 
-      // ✅ Refresh the notes list after upload
-      fetchNotes();
-
-      // setSubmittedNotes([
-      //   ...submittedNotes,
-      //   {
-      //     description: noteData.description,
-      //     subjectId: noteData.subjectId,
-      //     pdfFile: noteData.pdfFile,
-      //   },
-      // ]);
-
       setNoteData({
         description: "",
         subjectId: "",
         pdfFile: null,
       });
       document.getElementById("pdfUpload").value = "";
-<<<<<<< HEAD
 
-      // Refresh the notes list
-      const updatedNotes = await fetch("https://localhost:5197/api/notes");
-      setSubmittedNotes(await updatedNotes.json());
-=======
-      
->>>>>>> 9cea18d528b4437158fa461ded596f6057d4b29c
     } catch (error) {
       console.error("Upload failed:", error);
       alert(`Upload failed: ${error.message}`);
     }
   };
-
-<<<<<<< HEAD
-  // Get unique semesters from subjects
-  const uniqueSemesters = [...new Set(subjects.map((sub) => sub.semester))];
-
-  // Filter notes
-  const filteredNotes = submittedNotes.filter((note) => {
-    const matchSemester = filterSemester
-      ? note.subjects?.semester === parseInt(filterSemester)
-      : true;
-    const matchSubject = filterSubjectId
-      ? note.subjectId === parseInt(filterSubjectId)
-      : true;
-    return matchSemester && matchSubject;
-  });
-=======
-  const handleDelete = async (noteId) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this note?");
-    if (!confirmDelete) return;
-
-    try {
-      const response = await fetch(`http://localhost:5197/api/notes/${noteId}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        alert("Note deleted successfully.");
-        // Optional: refresh the notes list
-        setSubmittedNotes(prev => prev.filter(note => note.id !== noteId));
-      } else {
-        alert("Failed to delete note.");
-      }
-    } catch (error) {
-      console.error("Error deleting note:", error);
-      alert("An error occurred while deleting.");
-    }
-  };
-
->>>>>>> 9cea18d528b4437158fa461ded596f6057d4b29c
 
   return (
     <div className="d-flex vh-100">
@@ -236,6 +194,7 @@ function AddNotes() {
                     onChange={handleChange}
                     required
                   >
+                    {/* add subject id to value and subject name to label */}
                     <option value="">-- Select Subject --</option>
                     {subjects.map((subject) => (
                       <option key={subject.id} value={subject.id}>
@@ -264,86 +223,36 @@ function AddNotes() {
             </div>
           </div>
 
-          {/* Filter Section */}
-          <div className="d-flex gap-3 my-4">
-            <div className="form-group">
-              <label className="fw-bold">Semester</label>
-              <select
-                  className="form-select"
-                  value={filterSemester}
-                  onChange={(e) => setFilterSemester(e.target.value)}
-                >
-                  <option value="">Semester 1</option>
-                  {[1, 2, 3, 4, 5, 6,7,8].map((sem) => (
-                    <option key={sem} value={sem}>{`Semester ${sem}`}</option>
-                  ))}
-                </select>
-            </div>
-
-            <div className="form-group">
-              <label className="fw-bold">Subject</label>
-              <select
-                className="form-select"
-                value={filterSubjectId}
-                onChange={(e) => setFilterSubjectId(e.target.value)}
-              >
-                <option value="">All Subjects</option>
-                {subjects.map((subj) => (
-                  <option key={subj.id} value={subj.id}>
-                    {subj.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
           {/* Uploaded Notes List */}
-          {filteredNotes.length > 0 ? (
-            <div className="card shadow-sm mx-auto my-4 border-0 rounded-4" style={{ maxWidth: "800px" }}>
+          {submittedNotes.length > 0 && (
+            <div className="card shadow-sm mx-auto my-5 border-0 rounded-4" style={{ maxWidth: "800px" }}>
               <div className="card-header bg-secondary text-white rounded-top-4">
                 <h5 className="mb-0">
-                  <i className="fas fa-file-pdf me-2"></i>Filtered Uploaded Notes
+                  <i className="fas fa-file-pdf me-2"></i>Uploaded Notes
                 </h5>
               </div>
               <ul className="list-group list-group-flush">
-                {filteredNotes.map((note) => (
+                {submittedNotes.map((note, index) => (
                   <li key={note.id} className="list-group-item d-flex justify-content-between align-items-center">
                     <div>
-                      <strong>{note.description}</strong> ({note.subjects?.name || "Unknown Subject"}, Semester {note.subjects?.semester}) <br />
-                      <small className="text-muted">{note.pdfFile?.split("/").pop()}</small>
+                      <strong>{note.description}</strong> ({note.subjects?.name || "Unknown Subject"}) <br />
+                      <small className="text-muted">{note.pdfFile.split("/").pop()}</small>
                     </div>
                     <a
-<<<<<<< HEAD
-                      href={`https://localhost:5197/api/notes/download/${note.pdfFile}`}
-=======
-                      href={`http://localhost:5197/api/notes/view/${note.pdfFile}`}    // GET: api/notes/view/abc123.pdf 
->>>>>>> 9cea18d528b4437158fa461ded596f6057d4b29c
+                      // may need to trim the pdf file path to make it without \uploads to get the pdf name stored in db
+                      href={`https://localhost:5197/api/notes/download/${note.pdfFile}`}    // GET: api/notes/download/abc123.pdf 
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn btn-outline-primary btn-sm"
                     >
                       <i className="fas fa-eye me-1"></i>View
                     </a>
-                    <a
-                      href={`http://localhost:5197/api/notes/download/${note.pdfFile}`}
-                      className="btn btn-outline-success btn-sm ms-2"
-                    >
-                      <i className="fas fa-download me-1"></i>Download
-                    </a>
-                    <button
-                      onClick={() => handleDelete(note.id)}
-                      className="btn btn-outline-danger btn-sm ms-2"
-                    >
-                      <i className="fas fa-trash-alt me-1"></i>Delete
-                    </button>
-
                   </li>
                 ))}
               </ul>
             </div>
-          ) : (
-            <div className="alert alert-warning mt-4">No notes found for the selected filters.</div>
           )}
+
         </div>
       </main>
     </div>
