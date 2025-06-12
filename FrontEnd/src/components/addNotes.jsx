@@ -4,6 +4,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import "../App.css";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import api from "../api";
 
 function AddNotes() {
   const [noteData, setNoteData] = useState({
@@ -19,10 +20,11 @@ function AddNotes() {
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const response = await fetch("https://localhost:5197/api/subjects");   //Get method is default
-        if (!response.ok) throw new Error("Failed to fetch subjects.");
-        const data = await response.json();
-        setSubjects(data);
+        const response = await api.get("subjects");   //Get method is default
+        console.log(response.data);
+        // if (!response.ok) throw new Error("Failed to fetch subjects.");
+        // const data = await response.json();
+        setSubjects(response.data);
       } catch (err) {
         console.error(err);
         alert("Unable to load subjects.");
@@ -37,7 +39,7 @@ function AddNotes() {
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const response = await fetch("https://localhost:5197/api/notes"); // ✅ your backend endpoint
+        const response = await api.get("notes"); // ✅ your backend endpoint
         if (!response.ok) throw new Error("Failed to fetch notes");
         const data = await response.json();
         setSubmittedNotes(data);
