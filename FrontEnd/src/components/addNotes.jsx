@@ -19,7 +19,7 @@ function AddNotes() {
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const response = await fetch("https://localhost:5197/api/subjects");   //Get method is default
+        const response = await fetch("http://localhost:5197/api/subjects");   //Get method is default
         if (!response.ok) throw new Error("Failed to fetch subjects.");
         const data = await response.json();
         setSubjects(data);
@@ -37,7 +37,7 @@ function AddNotes() {
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const response = await fetch("https://localhost:5197/api/notes"); // ✅ your backend endpoint
+        const response = await fetch("http://localhost:5197/api/notes"); // ✅ your backend endpoint
         if (!response.ok) throw new Error("Failed to fetch notes");
         const data = await response.json();
         setSubmittedNotes(data);
@@ -113,7 +113,7 @@ function AddNotes() {
   formData.append("description", noteData.description);
 
     try {
-      const response = await fetch("https://localhost:5197/api/notes/upload", {
+      const response = await fetch("http://localhost:5197/api/notes/upload", {
         method: "POST",
         body: formData,
       });
@@ -239,13 +239,18 @@ function AddNotes() {
                       <small className="text-muted">{note.pdfFile.split("/").pop()}</small>
                     </div>
                     <a
-                      // may need to trim the pdf file path to make it without \uploads to get the pdf name stored in db
-                      href={`https://localhost:5197/api/notes/download/${note.pdfFile}`}    // GET: api/notes/download/abc123.pdf 
+                      href={`http://localhost:5197/api/notes/view/${note.pdfFile}`}    // GET: api/notes/view/abc123.pdf 
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn btn-outline-primary btn-sm"
                     >
                       <i className="fas fa-eye me-1"></i>View
+                    </a>
+                    <a
+                      href={`http://localhost:5197/api/notes/download/${note.pdfFile}`}
+                      className="btn btn-outline-success btn-sm ms-2"
+                    >
+                      <i className="fas fa-download me-1"></i>Download
                     </a>
                   </li>
                 ))}
