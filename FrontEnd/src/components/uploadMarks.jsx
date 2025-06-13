@@ -74,8 +74,9 @@ function UploadMarks() {
         external: "",
       });
     } catch (error) {
-      console.error("Error saving marks:", error);
-      alert("Failed to submit marks. Please try again.");
+      
+      console.error("Error saving marks:", error.response.data.message);
+      alert("Failed to submit marks. \n"+error.response.data.message);
     }
   };
 
