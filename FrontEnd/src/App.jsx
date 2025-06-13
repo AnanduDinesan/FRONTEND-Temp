@@ -27,6 +27,7 @@ function App() {
         <Route path="/student" element={<StudentHomePage />} />
         <Route path="/student-marks" element={<StudentMarkPage />} />
         <Route path="/student-notes" element={<StudentNotePage />} />
+        <Route path="/teacher" element={<HomePage />} />
         <Route path="/homePage" element={<HomePage />} />
         <Route path="/uploadMarks" element={<UploadMarks />} />
         <Route path="/addNotes" element={<AddNotes />} />

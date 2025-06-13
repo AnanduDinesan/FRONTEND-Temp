@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 function AddNotes() {
   const user = JSON.parse(localStorage.getItem('user'));
   const userId = user?.id;
+  const departmentId = user?.departmentId;
   const [noteData, setNoteData] = useState({
     userId: userId,
     description: "",
@@ -24,7 +25,8 @@ function AddNotes() {
     const fetchSubjects = async () => {
       try {
         console.log("user id :"+userId);
-        const response = await fetch("http://localhost:5197/api/subjects");
+        console.log("department:"+departmentId);
+        const response = await fetch(`http://localhost:5197/api/subjects/department/${departmentId}`);
         if (!response.ok) throw new Error("Failed to fetch subjects.");
         const data = await response.json();
         setSubjects(data);
@@ -33,6 +35,7 @@ function AddNotes() {
         alert("Unable to load subjects.");
       }
     };
+    fetchSubjects();
     const fetchNotes = async () => {
       try {
         const response = await fetch(`http://localhost:5197/api/notes/teacher/${userId}`);
@@ -45,7 +48,6 @@ function AddNotes() {
     };
     fetchNotes()
 
-    fetchSubjects();
   }, []);
 
   

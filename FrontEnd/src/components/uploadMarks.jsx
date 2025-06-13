@@ -6,6 +6,10 @@ import api from "../api";
 import { useNavigate } from "react-router-dom";
 
 function UploadMarks() {
+
+  const user = JSON.parse(localStorage.getItem('user'));
+  const departmentId = user?.departmentId;
+
   const [formData, setFormData] = useState({
     subject: "",
     userId: "",
@@ -21,7 +25,7 @@ function UploadMarks() {
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const res = await api.get("subjects");
+        const res = await api.get(`subjects/department/${departmentId}`);
         console.log("Subjects fetched:", res.data);
         setSubjects(res.data);
       } catch (error) {
