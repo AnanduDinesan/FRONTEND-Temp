@@ -7,7 +7,6 @@ const StudentNotePage = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const departmentId = user?.departmentId;
   // const departmentId = 2;    //used for static testing
-
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState('');
   const [notes, setNotes] = useState([]);
@@ -17,7 +16,7 @@ const StudentNotePage = () => {
     const fetchSubjects = async () => {
         if (departmentId) {
         try {
-            const res = await api.get(`/Subjects/dept/${departmentId}`);
+            const res = await api.get(`/Subjects/department/${departmentId}`);
             setSubjects(res.data);
         } catch (err) {
             setError('Error fetching subjects.');
@@ -40,8 +39,9 @@ const StudentNotePage = () => {
           }
         }else{
           try{
-            const res = await api.get(`/notes/dept/${departmentId}`);
+            const res = await api.get(`/notes/department/${departmentId}`);
             setNotes(res.data);
+            console.log(res);
               setError('');
           } catch (err) {
               setNotes([]);
