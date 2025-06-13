@@ -11,13 +11,6 @@ const Subject = () => {
     semester: ''
   });
 
-  // Static department data
-  // const departments1 = [
-  //   { departmentId: 'CSE', deptName: 'Computer Science' },
-  //   { departmentId: 'ECE', deptName: 'Electronics and Communication' },
-  //   { departmentId: 'ME', deptName: 'Mechanical Engineering' },
-  //   { departmentId: 'CE', deptName: 'Civil Engineering' }
-  // ];
   const [departments,setDepartments] = useState([]);
   useEffect(()=>{
     const fetchDepartments = async ()=>{
@@ -63,7 +56,7 @@ const Subject = () => {
     }
 
     try {
-      const res = await api.post("/subjects", formData);
+      const res = await api.post("/Subjects", formData);
       console.log(res);
       alert("Subject added successfully!");
 
