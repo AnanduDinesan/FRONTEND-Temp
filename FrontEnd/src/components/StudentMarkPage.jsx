@@ -76,13 +76,13 @@ const StudentMarkPage = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {marks.map((mark, index) => (
+                                {marks.map((item, index) => (
                                     <tr key={index}>
-                                        <td>{mark.subjectName}</td>
-                                        <td>{mark.internal1}</td>
-                                        <td>{mark.internal2}</td>
-                                        <td>{mark.external}</td>
-                                        <td>{mark.internal1 + mark.internal2 + mark.external}</td>
+                                        <td>{item.subject.name}</td>
+                                        <td>{item.mark.internal1}</td>
+                                        <td>{item.mark.internal2}</td>
+                                        <td>{item.mark.external}</td>
+                                        <td>{item.mark.internal1 + item.mark.internal2 + item.mark.external}</td>
                                     </tr>
                                 ))}
                             </tbody>
