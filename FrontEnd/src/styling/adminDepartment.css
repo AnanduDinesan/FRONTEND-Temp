@@ -44,13 +44,13 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: #4CAF50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+  border-color: #1a365d; /* dark blue */
+  box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.2);
 }
 
 button {
   padding: 14px 25px;
-  background-color: #4CAF50;
+  background-color: #1a365d !important; /* dark blue */
   color: white;
   border: none;
   cursor: pointer;
@@ -63,7 +63,7 @@ button {
 }
 
 button:hover {
-  background-color: #45a049;
+  background-color: #14294a; /* darker blue on hover */
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }

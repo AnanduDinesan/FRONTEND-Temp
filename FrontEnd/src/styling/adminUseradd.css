@@ -49,7 +49,7 @@ html, body {
     transform: translateX(-50%);
     width: 80px;
     height: 4px;
-    background-color: #4CAF50;
+    background-color: #14294a;
     border-radius: 2px;
 }
 
@@ -88,7 +88,7 @@ html, body {
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
-    border-color: #4CAF50;
+    border-color: #14294a;
     box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
     background-color: white;
 }
@@ -96,7 +96,7 @@ html, body {
 /* Button Styles */
 button {
     padding: 15px 25px;
-    background-color: #4CAF50;
+    background-color: #14294a;
     color: white;
     border: none;
     border-radius: 10px;
@@ -110,7 +110,7 @@ button {
 }
 
 button:hover {
-    background-color: #45a049;
+    background-color: #14294a;
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(76, 175, 80, 0.3);
 }

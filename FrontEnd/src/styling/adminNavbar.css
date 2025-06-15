@@ -1,6 +1,26 @@
 /* src/components/styles/Navbar.css */
 
 /* Base Styles */
+.logout-button-container {
+    margin-left: auto;
+}
+
+.logout-button {
+    padding: 10px 20px;
+    margin-left: 20px;
+    background-color: #e74c3c; /* red tone for logout */
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #c0392b;
+    transform: scale(1.05);
+}
+
 html, body {
     height: 100%;
     width: 100%;
@@ -75,7 +95,7 @@ html, body {
 
 /* Dashboard Navigation */
 .dashboard-navbar {
-    background-color: #1a365d;
+    background-color: #14294a;
     width: 250px;
     height: 100vh;
     position: fixed;
@@ -128,7 +148,7 @@ html, body {
 }
 
 .dashboard-nav-button.active {
-    background-color: #4CAF50;
+    background-color: #4857dc;
     color: white;
     font-weight: 600;
 }

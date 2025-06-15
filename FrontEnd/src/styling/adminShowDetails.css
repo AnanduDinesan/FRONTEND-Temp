@@ -1,18 +1,15 @@
-/* Reset base layout */
-
-/* Main container that fits full width excluding navbar and sidebar */
+/* ShowDetails Container */
 .show-details-container {
-  height: calc(100vh - 60px); /* Adjust this if your top navbar is taller or shorter */
-  margin-left: 200px; /* Adjust this to match your sidebar's width */
-  padding: 20px 30px;
+  height: calc(100vh - 60px);
+  margin-left: 200px;
   margin-top: 80px;
-  padding-left: 80px;
+  padding: 20px 30px 40px 80px;
   box-sizing: border-box;
   background-color: #f2f4f8;
   overflow-y: auto;
 }
 
-/* Header title */
+/* Header */
 .show-details-header {
   font-size: 2rem;
   font-weight: bold;
@@ -20,12 +17,11 @@
   margin-bottom: 20px;
 }
 
-/* Section that contains the dropdown and table */
+/* Section Controls */
 .section {
   margin-bottom: 30px;
 }
 
-/* Dropdown select */
 .section select {
   padding: 10px 12px;
   font-size: 16px;
@@ -36,41 +32,65 @@
   background-color: #ffffff;
 }
 
-/* Table container to allow horizontal scroll if needed */
+/* Table Container */
 .data-table-container {
   overflow-x: auto;
   margin-top: 20px;
 }
 
-/* Table styling */
+/* Table */
 .data-table {
-  width: 100%;
   border-collapse: collapse;
-  background-color: #ffffff;
   font-size: 15px;
   border: 1px solid #e0e0e0;
+  background-color: #ffffff;
+  width: 100%;
+  min-width: 700px; /* for wider tables */
 }
 
-/* Table header */
+/* Special style for short tables like Departments */
+.data-table.short {
+  width: auto;
+  min-width: unset;
+  max-width: 600px;
+}
+
+/* Table Header */
 .data-table thead {
-  background-color: #4CAF50;
+  background-color: #14294a;
   color: #ffffff;
   text-align: left;
 }
 
-/* Table cells */
 .data-table th,
 .data-table td {
-  padding: 12px 15px;
+  padding: 10px 14px;
   border: 1px solid #e0e0e0;
 }
 
-/* Row hover effect */
+/* Row Hover */
 .data-table tbody tr:hover {
   background-color: #f1f1f1;
 }
 
-/* Responsive handling */
+/* Buttons */
+button {
+  padding: 6px 10px;
+  margin-right: 5px;
+  background-color: #1a365d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: #14294a;
+}
+
+/* Responsive */
 @media screen and (max-width: 768px) {
   .show-details-container {
     margin-left: 0;
@@ -79,5 +99,9 @@
 
   .section select {
     width: 100%;
+  }
+
+  .data-table {
+    font-size: 14px;
   }
 }
