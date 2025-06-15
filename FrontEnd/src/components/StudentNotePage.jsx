@@ -6,7 +6,7 @@ import '../styling/StudentNotePage.css';
 const StudentNotePage = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   const departmentId = user?.departmentId;
-  // const departmentId = 2;    //used for static testing
+
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState('');
   const [notes, setNotes] = useState([]);
@@ -14,44 +14,33 @@ const StudentNotePage = () => {
 
   useEffect(() => {
     const fetchSubjects = async () => {
-        if (departmentId) {
+      if (departmentId) {
         try {
-            const res = await api.get(`/Subjects/department/${departmentId}`);
-            setSubjects(res.data);
+          const res = await api.get(`/Subjects/department/${departmentId}`);
+          setSubjects(res.data);
         } catch (err) {
-            setError('Error fetching subjects.');
+          setError('Error fetching subjects.');
         }
-        }
+      }
     };
     fetchSubjects();
   }, [departmentId]);
 
   useEffect(() => {
     const fetchNotes = async () => {
-        if (selectedSubject) {
-          try {
-              const res = await api.get(`/notes/filter?subjectId=${selectedSubject}`);
-              setNotes(res.data);
-              setError('');
-          } catch (err) {
-              setNotes([]);
-              setError('No notes found for the selected subject.');
-          }
-        }else{
-          try{
-            const res = await api.get(`/notes/department/${departmentId}`);
-            setNotes(res.data);
-            console.log(res);
-              setError('');
-          } catch (err) {
-              setNotes([]);
-              setError('No notes found.');
-          }
-        }
+      try {
+        const res = selectedSubject
+          ? await api.get(`/notes/filter?subjectId=${selectedSubject}`)
+          : await api.get(`/notes/department/${departmentId}`);
+        setNotes(res.data);
+        setError('');
+      } catch (err) {
+        setNotes([]);
+        setError(selectedSubject ? 'No notes found for the selected subject.' : 'No notes found.');
+      }
     };
     fetchNotes();
   }, [selectedSubject]);
-
 
   return (
     <div className="student-dashboard">
@@ -78,24 +67,26 @@ const StudentNotePage = () => {
             {notes.map((note, index) => (
               <li key={index} className="note-item">
                 <div>
-                  <strong>{note.description}</strong> ({note.subjects?.name || "Unknown Subject"}) <br />
+                  <strong>{note.description}</strong> ({note.subjects?.name || "Unknown Subject"})<br />
                   <small className="text-muted">{note.pdfFile}</small>
                 </div>
-                <p><strong>{note.subject}</strong> {new Date(note.postedDate).toLocaleDateString()}</p>
-                <a
-                  href={`http://localhost:5197/api/notes/view/${note.pdfFile}`}    // GET: api/notes/view/abc123.pdf 
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline-primary btn-sm"
-                >
-                <i className="fas fa-eye me-1"></i>View
-                </a>
-                <a
-                  href={`http://localhost:5197/api/notes/download/${note.pdfFile}`}
-                  className="btn btn-outline-success btn-sm ms-2"
-                >
-                 <i className="fas fa-download me-1"></i>Download
-                </a>
+                <p>{new Date(note.postedDate).toLocaleDateString()}</p>
+                <div>
+                  <a
+                    href={`http://localhost:5197/api/notes/view/${note.pdfFile}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-outline-primary btn-sm"
+                  >
+                    <i className="fas fa-eye me-1"></i> View
+                  </a>
+                  <a
+                    href={`http://localhost:5197/api/notes/download/${note.pdfFile}`}
+                    className="btn btn-outline-success btn-sm ms-2"
+                  >
+                    <i className="fas fa-download me-1"></i> Download
+                  </a>
+                </div>
               </li>
             ))}
           </ul>

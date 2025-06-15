@@ -10,6 +10,7 @@
   justify-content: flex-start;
   align-items: center;
   font-family: 'Segoe UI', sans-serif;
+  font-weight: bold;
 }
 
 .sidebar-title {
@@ -17,6 +18,7 @@
   font-size: 1.8rem;
   font-weight: bold;
   text-shadow: 0px 1px 2px #000;
+  padding-top: 19px;
 }
 
 .sidebar-link {

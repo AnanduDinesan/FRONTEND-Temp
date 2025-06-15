@@ -14,10 +14,7 @@ const StudentHomePage = () => {
     const fetchStudentDetails = async () => {
       if (studentId) {
         try {
-          const res = await api.get(`/user/${studentId}`, {
-            // params: { studentId }
-          }); 
-          // console.log(res.data);
+          const res = await api.get(`/user/${studentId}`);
           setStudentDetails(res.data);
           setError('');
         } catch (error) {
@@ -28,20 +25,23 @@ const StudentHomePage = () => {
     fetchStudentDetails();
   }, [studentId]);
 
-
   return (
     <div className="student-dashboard">
       <Sidebar />
       <div className="home-page-container">
-        <h2>Welcome, {studentDetails?.name || 'Student'}</h2>
+        <div className="welcome-banner">
+          <h2> Welcome, {studentDetails?.name || 'Student'}!</h2>
+          <p className="subheading">Here’s a quick overview of your profile.</p>
+        </div>
+
         {error && <p className="error-text">{error}</p>}
 
         {studentDetails && (
           <div className="student-info-card">
-            <p><strong>Name:</strong> {studentDetails.name}</p>
-            <p><strong>Email:</strong> {studentDetails.email}</p>
-            <p><strong>Department:</strong> {studentDetails.department.name}</p>
-            <p><strong>Role:</strong> {studentDetails.role}</p>
+            <div className="info-row"><span>👤</span> <strong>Name:</strong> {studentDetails.name}</div>
+            <div className="info-row"><span>📧</span> <strong>Email:</strong> {studentDetails.email}</div>
+            <div className="info-row"><span>🏫</span> <strong>Department:</strong> {studentDetails.department.name}</div>
+            <div className="info-row"><span>🎓</span> <strong>Role:</strong> {studentDetails.role}</div>
           </div>
         )}
       </div>

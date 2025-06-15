@@ -2,27 +2,27 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import '../styling/LoginPage.css';
-import 'jwt-decode'
 import { jwtDecode } from 'jwt-decode';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); // loading state
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     try {
       const response = await api.post('auth/login', { email, password });
-      console.log(response.data);
-      const { role, name, id, departmentId} = response.data;
-      localStorage.setItem('jwt',response.data.token);
-      const user =jwtDecode(response.data.token); 
-      console.log("user data : "+user);
-      localStorage.setItem('user', JSON.stringify({ id, name, role, email,  departmentId }));
+      const { role, name, id, departmentId } = response.data;
+
+      localStorage.setItem('jwt', response.data.token);
+      const user = jwtDecode(response.data.token);
+      localStorage.setItem('user', JSON.stringify({ id, name, role, email, departmentId }));
 
       if (role === 'admin') navigate('/admin');
       else if (role === 'teacher') navigate('/teacher');
@@ -31,6 +31,8 @@ const LoginPage = () => {
     } catch (err) {
       console.log(err);
       setError('Invalid email or password.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -53,7 +55,9 @@ const LoginPage = () => {
           required
         />
         {error && <p className="error">{error}</p>}
-        <button type="submit">Login</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Loading...' : 'Login'}
+        </button>
       </form>
     </div>
   );
