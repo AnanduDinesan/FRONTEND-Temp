@@ -8,52 +8,47 @@ function HomePage() {
   const navigate = useNavigate();
 
   return (
-    <div className="d-flex flex-column flex-md-row vh-100">
-      {/* SIDEBAR */}
-      <aside className="bg-dark text-white p-4" style={{ width: "220px", minHeight: "100vh" }}>
-        <div className="h4 mb-4 d-flex align-items-center">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-            alt="Logo"
-            width="30"
-            className="me-2"
-          />
-          MySchool
-        </div>
-        <ul className="nav flex-column">
-          <li className="nav-item">
+    <div className="d-flex vh-100">
+      {/* Sidebar */}
+      <aside
+        className="bg-dark text-white d-flex flex-column justify-content-between"
+        style={{ width: "220px", minHeight: "100vh" }}
+      >
+        <div className="p-4">
+          <div className="h4 mb-4 d-flex align-items-center">
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+              alt="Logo"
+              width="30"
+              className="me-2"
+            />
+            <span>TeachNote</span>
+          </div>
+          <nav className="nav flex-column">
+            <button className="btn text-start text-white mb-2" onClick={() => navigate("/homePage")}>
+              <i className="fas fa-home me-2"></i> Home
+            </button>
             <Link to="/addNotes" className="nav-link text-white">
               <i className="fas fa-sticky-note me-2"></i> Add Notes
             </Link>
-          </li>
-          <li className="nav-item">
             <Link to="/uploadMarks" className="nav-link text-white">
               <i className="fas fa-upload me-2"></i> Upload Marks
             </Link>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link text-white" href="#">
-              <i className="fas fa-chart-bar me-2"></i> Reports
-            </a>
-          </li>
-        </ul>
+          </nav>
+        </div>
       </aside>
 
-      {/* MAIN CONTENT */}
-      <div className="flex-grow-1 d-flex flex-column">
-        {/* TOP NAVBAR */}
-        <header className="d-flex justify-content-between align-items-center p-3 border-bottom bg-light">
-          <input
-            type="text"
-            placeholder="Search students..."
-            className="form-control w-50"
-          />
+      {/* Main Content */}
+      <div className="flex-grow-1 d-flex flex-column bg-lightblue">
+        {/* Top Navbar */}
+        <header className="d-flex justify-content-end align-items-center p-3 border-bottom bg-white shadow-sm">
           <div className="d-flex align-items-center">
             <img
-              src="https://i.pravatar.cc/40"
+              src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
               alt="Teacher Avatar"
               className="rounded-circle me-3"
-              style={{ width: "40px", height: "40px" }}
+              width="40"
+              height="40"
             />
             <button className="btn btn-outline-danger" onClick={() => navigate("/")}>
               Logout
@@ -61,26 +56,35 @@ function HomePage() {
           </div>
         </header>
 
-        {/* DASHBOARD CONTENT */}
-        <main className="p-4 bg-body-secondary h-100">
-          <div className="card p-4 shadow-lg">
-            <h1 className="mb-3">Teacher Dashboard</h1>
-            <p>Welcome to the Teacher Dashboard!</p>
-            <p>Here you can manage your classes, view student notes, and more.</p>
+        {/* Centered Dashboard Card */}
+        <main className="flex-grow-1 d-flex justify-content-center align-items-center">
+          <div
+            className="card p-5 shadow-lg bg-white rounded-4 border-0"
+            style={{ maxWidth: "600px", width: "90%" }}
+          >
+            <h1 className="mb-3 fw-bold text-primary text-center">Teacher Dashboard</h1>
+            <p className="text-muted text-center">Welcome to the Teacher Dashboard!</p>
+            <p className="text-muted text-center">
+              Manage your classes, add notes, and upload student marks from here.
+            </p>
 
-            <div className="mt-4">
-              <button
-                className="btn btn-primary me-3"
-                onClick={() => navigate("/addNotes")}
-              >
-                <i className="fas fa-plus me-1"></i> Add Notes
-              </button>
-              <button
-                className="btn btn-success"
-                onClick={() => navigate("/uploadMarks")}
-              >
-                <i className="fas fa-upload me-1"></i> Upload Marks
-              </button>
+            <div className="row mt-5 g-4">
+              <div className="col-md-6">
+                <button
+                  className="btn btn-lg w-100 d-flex align-items-center justify-content-center animated-btn btn-gradient-blue"
+                  onClick={() => navigate("/addNotes")}
+                >
+                  <i className="fas fa-plus me-2 icon-animate"></i> Add Notes
+                </button>
+              </div>
+              <div className="col-md-6">
+                <button
+                  className="btn btn-lg w-100 d-flex align-items-center justify-content-center animated-btn btn-gradient-green"
+                  onClick={() => navigate("/uploadMarks")}
+                >
+                  <i className="fas fa-upload me-2 icon-animate"></i> Upload Marks
+                </button>
+              </div>
             </div>
           </div>
         </main>
