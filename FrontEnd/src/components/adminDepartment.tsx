@@ -1,27 +1,29 @@
-import { useState } from 'react';
-import api from '../api'; 
+import React, { ChangeEvent, FormEvent, useState } from 'react';
+import api from '../api'; // Ensure api is typed or use axios.create with types
 import '../styling/adminDepartment.css';
 import Navbar from './adminNavbar';
 
-interface DepartmentFormData{
+// Define the structure of form data
+interface DepartmentForm {
   id: string;
   name: string;
 }
-const Department:React.FC= () => {
-  const [formData, setFormData] = useState<DepartmentFormData>({
+
+const Department: React.FC = () => {
+  const [formData, setFormData] = useState<DepartmentForm>({
     id: '',
     name: ''
   });
 
-  const handleChange = (e:React.ChangeEvent <HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value
     }));
   };
 
-  const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!formData.id || !formData.name) {
@@ -34,19 +36,16 @@ const Department:React.FC= () => {
       console.log(res.data);
       alert('Department added successfully!');
       setFormData({ id: '', name: '' });
-    } catch (error:any) {
+    } catch (error: any) {
       console.error('Error adding department:', error);
-      alert('Failed to add department. Please check the console.');
-
       const message = error.response?.data?.message || 'Failed to add department.';
       alert(message);
-      console.log(message);
     }
   };
 
   return (
     <>
-    <Navbar />
+      <Navbar />
       <div className="department-container">
         <h2>Department Creation</h2>
         <form onSubmit={handleSubmit}>
@@ -75,7 +74,8 @@ const Department:React.FC= () => {
           <button type="submit">Create Department</button>
         </form>
       </div>
-      </>
+    </>
   );
 };
+
 export default Department;
