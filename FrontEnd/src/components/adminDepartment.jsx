@@ -33,6 +33,10 @@ const Department = () => {
     } catch (error) {
       console.error('Error adding department:', error);
       alert('Failed to add department. Please check the console.');
+
+      const message = error.response?.data?.message || 'Failed to add department.';
+      alert(message);
+      console.log(message);
     }
   };
 
