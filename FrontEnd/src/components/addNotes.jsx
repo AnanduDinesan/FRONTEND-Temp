@@ -3,9 +3,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "../App.css";
 import { useNavigate } from "react-router-dom";
+import api from "../api"; // ✅ Axios instance
 
 function AddNotes() {
-  const user = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.id;
   const departmentId = user?.departmentId;
 
@@ -25,10 +26,8 @@ function AddNotes() {
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const response = await fetch(`http://localhost:5197/api/subjects/department/${departmentId}`);
-        if (!response.ok) throw new Error("Failed to fetch subjects.");
-        const data = await response.json();
-        setSubjects(data);
+        const response = await api.get(`/subjects/department/${departmentId}`);
+        setSubjects(response.data);
       } catch (err) {
         console.error(err);
         alert("Unable to load subjects.");
@@ -37,10 +36,8 @@ function AddNotes() {
 
     const fetchNotes = async () => {
       try {
-        const response = await fetch(`http://localhost:5197/api/notes/teacher/${userId}`);
-        if (!response.ok) throw new Error("Failed to fetch notes");
-        const data = await response.json();
-        setSubmittedNotes(data);
+        const response = await api.get(`/notes/teacher/${userId}`);
+        setSubmittedNotes(response.data);
       } catch (error) {
         console.error("Error fetching notes:", error);
       }
@@ -48,7 +45,7 @@ function AddNotes() {
 
     fetchSubjects();
     fetchNotes();
-  }, []);
+  }, [departmentId, userId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -84,15 +81,9 @@ function AddNotes() {
     formData.append("userId", noteData.userId);
 
     try {
-      const response = await fetch("http://localhost:5197/api/notes/upload", {
-        method: "POST",
-        body: formData,
+      await api.post("/notes/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
-      }
 
       alert("Note uploaded successfully!");
       document.getElementById("pdfUpload").value = "";
@@ -103,12 +94,11 @@ function AddNotes() {
         pdfFile: null,
       });
 
-      const updatedNotes = await fetch(`http://localhost:5197/api/notes/teacher/${userId}`);
-      const data = await updatedNotes.json();
-      setSubmittedNotes(data);
+      const updatedNotes = await api.get(`/notes/teacher/${userId}`);
+      setSubmittedNotes(updatedNotes.data);
     } catch (error) {
       console.error("Upload failed:", error);
-      alert(`Upload failed: ${error.message}`);
+      alert(`Upload failed: ${error.response?.data || error.message}`);
     }
   };
 
@@ -116,16 +106,9 @@ function AddNotes() {
     if (!window.confirm("Are you sure you want to delete this note?")) return;
 
     try {
-      const response = await fetch(`http://localhost:5197/api/notes/${noteId}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        alert("Note deleted successfully.");
-        setSubmittedNotes((prev) => prev.filter((note) => note.id !== noteId));
-      } else {
-        alert("Failed to delete note.");
-      }
+      await api.delete(`/notes/${noteId}`);
+      alert("Note deleted successfully.");
+      setSubmittedNotes((prev) => prev.filter((note) => note.id !== noteId));
     } catch (error) {
       console.error("Error deleting note:", error);
       alert("An error occurred while deleting.");
