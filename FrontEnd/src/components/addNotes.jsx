@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "../App.css";
 import { useNavigate } from "react-router-dom";
-import api from "../api"; // ✅ Axios instance
+import api from "../api"; 
 
 function AddNotes() {
   const user = JSON.parse(localStorage.getItem("user"));

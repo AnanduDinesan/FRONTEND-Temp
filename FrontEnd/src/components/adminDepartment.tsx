@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState } from 'react';
 import api from '../api'; 
 import '../styling/adminDepartment.css';
@@ -9,19 +10,42 @@ interface DepartmentFormData{
 }
 const Department:React.FC= () => {
   const [formData, setFormData] = useState<DepartmentFormData>({
+=======
+import React, { ChangeEvent, FormEvent, useState } from 'react';
+import api from '../api'; // Ensure api is typed or use axios.create with types
+import '../styling/adminDepartment.css';
+import Navbar from './adminNavbar';
+
+// Define the structure of form data
+interface DepartmentForm {
+  id: string;
+  name: string;
+}
+
+const Department: React.FC = () => {
+  const [formData, setFormData] = useState<DepartmentForm>({
+>>>>>>> d4b1be159f326588ef6b88586d2926260f8658fe
     id: '',
     name: ''
   });
 
+<<<<<<< HEAD
   const handleChange = (e:React.ChangeEvent <HTMLInputElement>) => {
+=======
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+>>>>>>> d4b1be159f326588ef6b88586d2926260f8658fe
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value
     }));
   };
 
+<<<<<<< HEAD
   const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
+=======
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+>>>>>>> d4b1be159f326588ef6b88586d2926260f8658fe
     e.preventDefault();
 
     if (!formData.id || !formData.name) {
@@ -34,19 +58,20 @@ const Department:React.FC= () => {
       console.log(res.data);
       alert('Department added successfully!');
       setFormData({ id: '', name: '' });
+<<<<<<< HEAD
     } catch (error:any) {
+=======
+    } catch (error: any) {
+>>>>>>> d4b1be159f326588ef6b88586d2926260f8658fe
       console.error('Error adding department:', error);
-      alert('Failed to add department. Please check the console.');
-
       const message = error.response?.data?.message || 'Failed to add department.';
       alert(message);
-      console.log(message);
     }
   };
 
   return (
     <>
-    <Navbar />
+      <Navbar />
       <div className="department-container">
         <h2>Department Creation</h2>
         <form onSubmit={handleSubmit}>
@@ -75,7 +100,11 @@ const Department:React.FC= () => {
           <button type="submit">Create Department</button>
         </form>
       </div>
-      </>
+    </>
   );
 };
+<<<<<<< HEAD
+=======
+
+>>>>>>> d4b1be159f326588ef6b88586d2926260f8658fe
 export default Department;
