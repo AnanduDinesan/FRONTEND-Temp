@@ -1,15 +1,19 @@
 import { useState } from 'react';
-import api from '../api'; // Ensure this is correctly configured
+import api from '../api'; 
 import '../styling/adminDepartment.css';
 import Navbar from './adminNavbar';
 
-const Department = () => {
-  const [formData, setFormData] = useState({
+interface DepartmentFormData{
+  id: string;
+  name: string;
+}
+const Department:React.FC= () => {
+  const [formData, setFormData] = useState<DepartmentFormData>({
     id: '',
     name: ''
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e:React.ChangeEvent <HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -17,7 +21,7 @@ const Department = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!formData.id || !formData.name) {
@@ -30,7 +34,7 @@ const Department = () => {
       console.log(res.data);
       alert('Department added successfully!');
       setFormData({ id: '', name: '' });
-    } catch (error) {
+    } catch (error:any) {
       console.error('Error adding department:', error);
       alert('Failed to add department. Please check the console.');
 
@@ -74,5 +78,4 @@ const Department = () => {
       </>
   );
 };
-
 export default Department;

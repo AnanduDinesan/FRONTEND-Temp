@@ -2,33 +2,43 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import '../styling/LoginPage.css';
-import { jwtDecode } from 'jwt-decode';
 
-const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+interface LoginDetails{
+  email: string;
+  password: string;
+}
+const LoginPage: React.FC = () => {
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false); // loading state
+  const [loading, setLoading] = useState(false); 
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const [formData, setFormData] = useState <LoginDetails>({
+     email:'',
+     password:''
+  });
+  const handleChange= (e:React.ChangeEvent <HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))};
+  const handleLogin = async (e:React.FormEvent <HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      const response = await api.post('auth/login', { email, password });
-      const { role, name, id, departmentId } = response.data;
+      const response = await api.post('auth/login', formData);
+      const { role, name, id, departmentId, email} = response.data;
 
       localStorage.setItem('jwt', response.data.token);
-      const user = jwtDecode(response.data.token);
       localStorage.setItem('user', JSON.stringify({ id, name, role, email, departmentId }));
 
       if (role === 'admin') navigate('/admin');
       else if (role === 'teacher') navigate('/teacher');
       else if (role === 'student') navigate('/student');
       else setError('Invalid user role.');
-    } catch (err) {
+    } catch (err:any) {
       console.log(err);
       setError('Invalid email or password.');
     } finally {
@@ -43,15 +53,17 @@ const LoginPage = () => {
         <input
           type="email"
           placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
           required
         />
         <input
           type="password"
           placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
           required
         />
         {error && <p className="error">{error}</p>}
