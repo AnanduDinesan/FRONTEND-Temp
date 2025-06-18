@@ -3,14 +3,48 @@ import api from '../api';
 import Sidebar from './StudentSidebar';
 import '../styling/StudentMarkPage.css';
 
-const StudentMarkPage = () => {
-    const user = JSON.parse(localStorage.getItem('user'));
+interface LocalUser{
+    role:string; 
+    name: string;
+    id: string;
+    departmentId: string;
+    email: string;
+}
+
+interface MarkStruct{
+    mark:{
+        id: number;
+        subjectId: number;
+        internal1: number;
+        internal2: number;
+        external: number;
+        total: number;
+        userId: string;
+    }
+    subject:{
+        id: number;
+        name: string;
+        semester: number;
+        departmentId: string;
+    }
+}
+
+interface ResponseStruct{
+    semester: number;
+    semesterTotal: number|null;
+    subjects: MarkStruct[];
+}
+
+
+const StudentMarkPage :React.FC = () => {
+    const localuser = localStorage.getItem('user');
+    const user: LocalUser | null = localuser ? JSON.parse(localuser) : null
     const studentId = user?.id;
 
-    const [semester, setSemester] = useState(1);
-    const [marks, setMarks] = useState([]);
-    const [semesterTotal, setSemesterTotal] = useState(null);
-    const [error, setError] = useState('');
+    const [semester, setSemester] = useState<number|''>('');
+    const [marks, setMarks] = useState<MarkStruct[]>([]);
+    const [semesterTotal, setSemesterTotal] = useState<number|null>(null);
+    const [error, setError] = useState<string>('');
 
     const semesterOptions = [
         { label: 'Sem 1', value: 1 },
@@ -27,12 +61,12 @@ const StudentMarkPage = () => {
         const fetchStudentMarks = async () => {
             if (studentId && semester !== '') {
                 try {
-                    const res = await api.get(`marks/student/${studentId}/semester/${semester}`);
+                    const res = await api.get<ResponseStruct>(`marks/student/${studentId}/semester/${semester}`);
                     console.log(res.data);
                     setMarks(res.data.subjects || []);
                     setSemesterTotal(res.data.semesterTotal || null);
                     setError('');
-                } catch (error) {
+                } catch (error:any) {
                     setError('No marks found for this semester.');
                     setMarks([]);
                     setSemesterTotal(null);
@@ -51,8 +85,7 @@ const StudentMarkPage = () => {
                 <select
                     className="semester-select"
                     value={semester}
-                    onChange={(e) => setSemester(Number(e.target.value))}
-                >
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSemester(Number(e.target.value))}>
                     <option value="">---Select Semester---</option>
                     {semesterOptions.map((sem) => (
                         <option key={sem.value} value={sem.value}>

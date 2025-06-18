@@ -3,21 +3,41 @@ import api from '../api';
 import Sidebar from './StudentSidebar';
 import '../styling/StudentHomePage.css';
 
-const StudentHomePage = () => {
-  const user = JSON.parse(localStorage.getItem('user'));
+interface StudentDetailsStruct{
+  id:string;
+  name:string;
+  email:string;
+  department: {
+    name:string;
+  };
+  role:string;
+}
+
+interface LocalUser{
+  role:string; 
+  name: string;
+  id: string;
+  departmentId: string;
+  email: string;
+}
+
+const StudentHomePage: React.FC = () => {
+
+  const localUserStr = localStorage.getItem('user');
+  const user: LocalUser | null = localUserStr ? JSON.parse(localUserStr) : null;
   const studentId = user?.id;
 
-  const [studentDetails, setStudentDetails] = useState(null);
+  const [studentDetails, setStudentDetails] = useState<StudentDetailsStruct | null>(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchStudentDetails = async () => {
       if (studentId) {
         try {
-          const res = await api.get(`/user/${studentId}`);
+          const res = await api.get<StudentDetailsStruct>(`/user/${studentId}`);
           setStudentDetails(res.data);
           setError('');
-        } catch (error) {
+        } catch (error:any) {
           setError('Failed to fetch student details.');
         }
       }

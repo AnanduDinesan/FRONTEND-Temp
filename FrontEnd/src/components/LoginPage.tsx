@@ -7,28 +7,39 @@ interface LoginDetails{
   email: string;
   password: string;
 }
+
+interface ResponseStruct{
+  token: string;
+  id: string;
+  name: string;
+  role: string;
+  email: string;
+  departmentId: string;
+}
+
 const LoginPage: React.FC = () => {
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false); 
+  const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState <LoginDetails>({
-     email:'',
-     password:''
+  const [formData, setFormData] = useState<LoginDetails>({
+    email: '',
+    password: ''
   });
-  const handleChange= (e:React.ChangeEvent <HTMLInputElement>) => {
+  const handleChange= (e:React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }))};
-  const handleLogin = async (e:React.FormEvent <HTMLFormElement>) => {
+  const handleLogin = async (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      const response = await api.post('auth/login', formData);
+      const response = await api.post<ResponseStruct>('auth/login', formData);
+      console.log(response.data);
       const { role, name, id, departmentId, email} = response.data;
 
       localStorage.setItem('jwt', response.data.token);
