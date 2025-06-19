@@ -17,13 +17,13 @@ interface Note {
   description: string;
   subjectId: number;
   pdfFile: string;
-  subjects?: Subject;
+  subjects: Subject;
 }
 
 interface NoteData {
   userId: number;
   description: string;
-  subjectId: string;
+  subjectId: number;
   pdfFile: File | null;
 }
 
@@ -40,7 +40,7 @@ function AddNotes() {
   const [noteData, setNoteData] = useState<NoteData>({
     userId: userId ?? 0,
     description: "",
-    subjectId: "",
+    subjectId: 0,
     pdfFile: null,
   });
 
@@ -105,7 +105,7 @@ function AddNotes() {
 
     const formData = new FormData();
     formData.append("pdfFile", noteData.pdfFile);
-    formData.append("subjectId", parseInt(noteData.subjectId));
+    formData.append("subjectId", noteData.subjectId.toString());
     formData.append("description", noteData.description);
     formData.append("userId", noteData.userId.toString());
 
@@ -121,7 +121,7 @@ function AddNotes() {
       setNoteData({
         userId: userId ?? 0,
         description: "",
-        subjectId: "",
+        subjectId: 0,
         pdfFile: null,
       });
 
@@ -220,7 +220,7 @@ function AddNotes() {
             <div className="d-flex gap-3 my-4">
               <div className="form-group">
                 <label className="fw-bold">Semester</label>
-                <select className="form-select" value={filterSemester} onChange={(e) => setFilterSemester(e.target.value)}>
+                <select className="form-select" value={filterSemester} onChange={(e:React.ChangeEvent<HTMLSelectElement> ) => setFilterSemester(e.target.value)}>
                   <option value="">All Semesters</option>
                   {uniqueSemesters.map((sem) => (
                     <option key={sem} value={sem.toString()}>Semester {sem}</option>
@@ -229,7 +229,7 @@ function AddNotes() {
               </div>
               <div className="form-group">
                 <label className="fw-bold">Subject</label>
-                <select className="form-select" value={filterSubjectId} onChange={(e) => setFilterSubjectId(e.target.value)}>
+                <select className="form-select" value={filterSubjectId} onChange={(e:React.ChangeEvent<HTMLSelectElement>) => setFilterSubjectId(e.target.value)}>
                   <option value="">All Subjects</option>
                   {subjects.map((subj) => (
                     <option key={subj.id} value={subj.id.toString()}>{subj.name}</option>

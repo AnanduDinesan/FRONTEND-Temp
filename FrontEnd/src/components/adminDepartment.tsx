@@ -54,7 +54,7 @@ const Department:React.FC= () => {
             <label>Department ID:</label>
             <input
               type="text"
-              name="id"
+              name="id" 
               value={formData.id}
               onChange={handleChange}
               required
