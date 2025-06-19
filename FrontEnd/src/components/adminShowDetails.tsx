@@ -1,27 +1,50 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, ChangeEvent } from 'react';
 import '../styling/adminShowDetails.css';
 import Navbar from './adminNavbar';
 import api from '../api';
 
+// === Interfaces ===
+interface Department {
+  id: number;
+  name: string;
+}
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  department: Department;
+  departmentId?: number; // optional for update
+}
+
+interface Subject {
+  id: number;
+  name: string;
+  semester: string;
+  department: Department;
+  departmentId?: number; // for editing
+}
+
 const ShowDetails = () => {
-  const [users, setUsers] = useState([]);
-  const [departments, setDepartments] = useState([]);
-  const [subjects, setSubjects] = useState([]);
-  const [selectedType, setSelectedType] = useState('');
+  const [users, setUsers] = useState<User[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [selectedType, setSelectedType] = useState<string>('');
 
-  const [editingUserId, setEditingUserId] = useState(null);
-  const [editedUser, setEditedUser] = useState({});
+  const [editingUserId, setEditingUserId] = useState<number | null>(null);
+  const [editedUser, setEditedUser] = useState<Partial<User>>({});
 
-  const [editingDeptId, setEditingDeptId] = useState(null);
-  const [editedDeptName, setEditedDeptName] = useState('');
+  const [editingDeptId, setEditingDeptId] = useState<number | null>(null);
+  const [editedDeptName, setEditedDeptName] = useState<string>('');
 
-  const [editingSubjectId, setEditingSubjectId] = useState(null);
-  const [editedSubject, setEditedSubject] = useState({});
+  const [editingSubjectId, setEditingSubjectId] = useState<number | null>(null);
+  const [editedSubject, setEditedSubject] = useState<Partial<Subject>>({});
 
-  // Fetching Functions
+  // === Fetching ===
   const fetchUsers = async () => {
     try {
-      const res = await api.get('/User/all');
+      const res = await api.get<User[]>('/User/all');
       setUsers(res.data);
     } catch (err) {
       console.error('Error fetching users:', err);
@@ -30,7 +53,7 @@ const ShowDetails = () => {
 
   const fetchDepartments = async () => {
     try {
-      const res = await api.get('/departments');
+      const res = await api.get<Department[]>('/departments');
       setDepartments(res.data);
     } catch (err) {
       console.error('Error fetching departments:', err);
@@ -39,7 +62,7 @@ const ShowDetails = () => {
 
   const fetchSubjects = async () => {
     try {
-      const res = await api.get('/Subjects');
+      const res = await api.get<Subject[]>('/Subjects');
       setSubjects(res.data);
     } catch (err) {
       console.error('Error fetching subjects:', err);
@@ -52,8 +75,8 @@ const ShowDetails = () => {
     fetchSubjects();
   }, []);
 
-  // === USERS ===
-  const handleDeleteUser = async (id) => {
+  // === USER FUNCTIONS ===
+  const handleDeleteUser = async (id: number) => {
     try {
       await api.delete(`/User/${id}`);
       await fetchUsers();
@@ -64,11 +87,11 @@ const ShowDetails = () => {
     }
   };
 
-  const handleEditClickUser = (user) => {
+  const handleEditClickUser = (user: User) => {
     setEditingUserId(user.id);
     setEditedUser({
       ...user,
-      departmentId: user.department?.id || ''
+      departmentId: user.department?.id,
     });
   };
 
@@ -89,7 +112,7 @@ const ShowDetails = () => {
     }
   };
 
-  const handleInputChangeUser = (e) => {
+  const handleInputChangeUser = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setEditedUser((prev) => ({
       ...prev,
@@ -97,8 +120,8 @@ const ShowDetails = () => {
     }));
   };
 
-  // === DEPARTMENTS ===
-  const handleEditDept = (dept) => {
+  // === DEPARTMENT FUNCTIONS ===
+  const handleEditDept = (dept: Department) => {
     setEditingDeptId(dept.id);
     setEditedDeptName(dept.name);
   };
@@ -123,7 +146,7 @@ const ShowDetails = () => {
     }
   };
 
-  const handleDeleteDept = async (id) => {
+  const handleDeleteDept = async (id: number) => {
     try {
       await api.delete(`/departments/${id}`);
       await fetchDepartments();
@@ -134,13 +157,13 @@ const ShowDetails = () => {
     }
   };
 
-  // === SUBJECTS ===
-  const handleEditSubject = (sub) => {
+  // === SUBJECT FUNCTIONS ===
+  const handleEditSubject = (sub: Subject) => {
     setEditingSubjectId(sub.id);
     setEditedSubject({
       name: sub.name,
       semester: sub.semester,
-      departmentId: sub.department?.id || '',
+      departmentId: sub.department?.id,
     });
   };
 
@@ -149,7 +172,7 @@ const ShowDetails = () => {
     setEditedSubject({});
   };
 
-  const handleInputChangeSubject = (e) => {
+  const handleInputChangeSubject = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setEditedSubject((prev) => ({
       ...prev,
@@ -172,7 +195,7 @@ const ShowDetails = () => {
     }
   };
 
-  const handleDeleteSubject = async (id) => {
+  const handleDeleteSubject = async (id: number) => {
     try {
       await api.delete(`/Subjects/${id}`);
       await fetchSubjects();
@@ -183,12 +206,14 @@ const ShowDetails = () => {
     }
   };
 
-  // === RENDERING ===
+  // === TABLE RENDER ===
   const renderTable = () => {
     if (selectedType === 'users') {
       return (
         <table className="data-table">
-          <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Department</th><th>Edit</th><th>Delete</th></tr></thead>
+          <thead>
+            <tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Department</th><th>Edit</th><th>Delete</th></tr>
+          </thead>
           <tbody>
             {users.map((u) => (
               <tr key={u.id}>
@@ -200,15 +225,15 @@ const ShowDetails = () => {
                     <option value="admin">admin</option>
                     <option value="teacher">teacher</option>
                     <option value="student">student</option>
-                  </select>) : u.role}
-                </td>
+                  </select>
+                ) : u.role}</td>
                 <td>{editingUserId === u.id ? (
                   <select name="departmentId" value={editedUser.departmentId || ''} onChange={handleInputChangeUser}>
                     {departments.map((d) => (
                       <option key={d.id} value={d.id}>{d.name}</option>
                     ))}
-                  </select>) : u.department?.name}
-                </td>
+                  </select>
+                ) : u.department?.name}</td>
                 <td>{editingUserId === u.id ? (
                   <>
                     <button onClick={handleSaveEditUser}>Save</button>
@@ -261,10 +286,11 @@ const ShowDetails = () => {
                 <td>{editingSubjectId === sub.id ? <input name="name" value={editedSubject.name || ''} onChange={handleInputChangeSubject} /> : sub.name}</td>
                 <td>{editingSubjectId === sub.id ? (
                   <select name="departmentId" value={editedSubject.departmentId || ''} onChange={handleInputChangeSubject}>
-                    {departments.map((dept) => (
-                      <option key={dept.id} value={dept.id}>{dept.name}</option>
+                    {departments.map((d) => (
+                      <option key={d.id} value={d.id}>{d.name}</option>
                     ))}
-                  </select>) : sub.department?.name}</td>
+                  </select>
+                ) : sub.department?.name}</td>
                 <td>{editingSubjectId === sub.id ? (
                   <input name="semester" value={editedSubject.semester || ''} onChange={handleInputChangeSubject} />
                 ) : sub.semester}</td>

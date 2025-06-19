@@ -1,32 +1,51 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, ChangeEvent, FormEvent } from 'react';
 import '../styling/adminSubject.css';
 import Navbar from './adminNavbar';
 import api from '../api';
 
+// Define types
+interface FormData {
+  id: string;
+  name: string;
+  departmentId: string;
+  semester: string;
+}
+
+interface Department {
+  id: string;
+  name: string;
+}
+
+interface Semester {
+  id: string;
+  name: string;
+}
+
 const Subject = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     id: '',
     name: '',
     departmentId: '',
     semester: ''
   });
 
-  const [departments,setDepartments] = useState([]);
-  useEffect(()=>{
-    const fetchDepartments = async ()=>{
-      try{
-        const res = await api.get('departments');
+  const [departments, setDepartments] = useState<Department[]>([]);
+
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const res = await api.get<Department[]>('/departments');
         console.log(res.data);
         setDepartments(res.data);
-
-      }catch(err){
-        console.log("Error:"+err)
+      } catch (err) {
+        console.error("Error fetching departments:", err);
       }
     };
     fetchDepartments();
-  },[]);
+  }, []);
+
   // Static semester list
-  const semesters = [
+  const semesters: Semester[] = [
     { id: '1', name: 'Semester 1' },
     { id: '2', name: 'Semester 2' },
     { id: '3', name: 'Semester 3' },
@@ -37,8 +56,8 @@ const Subject = () => {
     { id: '8', name: 'Semester 8' }
   ];
 
-  // Handle input change
-  const handleChange = (e) => {
+  // Handle input and select changes
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -47,7 +66,7 @@ const Subject = () => {
   };
 
   // Handle form submission
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!formData.id || !formData.name || !formData.departmentId || !formData.semester) {
@@ -60,6 +79,7 @@ const Subject = () => {
       console.log(res);
       alert("Subject added successfully!");
 
+      // Reset the form
       setFormData({
         id: '',
         name: '',
@@ -80,19 +100,36 @@ const Subject = () => {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Subject ID:</label>
-            <input type="text" name="id" value={formData.id} onChange={handleChange} required />
+            <input
+              type="text"
+              name="id"
+              value={formData.id}
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div className="form-group">
             <label>Subject Name:</label>
-            <input type="text" name="name" value={formData.name} onChange={handleChange} required />
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
           </div>
 
           <div className="form-group">
             <label>Department:</label>
-            <select name="departmentId" value={formData.departmentId} onChange={handleChange} required>
+            <select
+              name="departmentId"
+              value={formData.departmentId}
+              onChange={handleChange}
+              required
+            >
               <option value="">Select Department</option>
-              {departments.map(dept => (
+              {departments.map((dept) => (
                 <option key={dept.id} value={dept.id}>
                   {dept.name}
                 </option>
@@ -102,9 +139,14 @@ const Subject = () => {
 
           <div className="form-group">
             <label>Semester:</label>
-            <select name="semester" value={formData.semester} onChange={handleChange} required>
+            <select
+              name="semester"
+              value={formData.semester}
+              onChange={handleChange}
+              required
+            >
               <option value="">Select Semester</option>
-              {semesters.map(sem => (
+              {semesters.map((sem) => (
                 <option key={sem.id} value={sem.id}>
                   {sem.name}
                 </option>
@@ -120,4 +162,3 @@ const Subject = () => {
 };
 
 export default Subject;
-
