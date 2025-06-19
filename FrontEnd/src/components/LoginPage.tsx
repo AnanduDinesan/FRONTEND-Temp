@@ -10,11 +10,11 @@ interface LoginDetails{
 
 interface ResponseStruct{
   token: string;
-  id: string;
+  id: number;
   name: string;
   role: string;
   email: string;
-  departmentId: string;
+  departmentId: number;
 }
 
 const LoginPage: React.FC = () => {
@@ -40,10 +40,9 @@ const LoginPage: React.FC = () => {
     try {
       const response = await api.post<ResponseStruct>('auth/login', formData);
       console.log(response.data);
-      const { role, name, id, departmentId, email} = response.data;
+      const role:string = response.data.role;
 
       localStorage.setItem('jwt', response.data.token);
-      localStorage.setItem('user', JSON.stringify({ id, name, role, email, departmentId }));
 
       if (role === 'admin') navigate('/admin');
       else if (role === 'teacher') navigate('/teacher');

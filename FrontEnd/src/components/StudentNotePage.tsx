@@ -3,22 +3,48 @@ import api from '../api';
 import Sidebar from './StudentSidebar';
 import '../styling/StudentNotePage.css';
 
-const StudentNotePage = () => {
-  const user = JSON.parse(localStorage.getItem('user'));
+interface LocalUser{
+    role:string; 
+    name: string;
+    id: number;
+    departmentId: number;
+    email: string;
+}
+
+interface SubjectStruct {
+    id: number;
+    name: string;
+    semester: number;
+    departmentId: number;
+}
+
+interface NoteStruct{
+    id: number;
+    description: string;
+    pdfFile: string;
+    postedDate: string;
+    subjectId: number;
+    userId: number;
+    subjects: SubjectStruct;
+}
+
+const StudentNotePage:React.FC = () => {
+  const localuser = localStorage.getItem('user');
+  const user:LocalUser|null = localuser ?JSON.parse(localuser) : null;
   const departmentId = user?.departmentId;
 
-  const [subjects, setSubjects] = useState([]);
-  const [selectedSubject, setSelectedSubject] = useState('');
-  const [notes, setNotes] = useState([]);
+  const [subjects, setSubjects] = useState<SubjectStruct[]>([]);
+  const [selectedSubject, setSelectedSubject] = useState<number|''>('');
+  const [notes, setNotes] = useState<NoteStruct[]>([]);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchSubjects = async () => {
       if (departmentId) {
         try {
-          const res = await api.get(`/Subjects/department/${departmentId}`);
+          const res = await api.get<SubjectStruct[]>(`/Subjects/department/${departmentId}`);
           setSubjects(res.data);
-        } catch (err) {
+        } catch (err:any) {
           setError('Error fetching subjects.');
         }
       }
@@ -30,11 +56,11 @@ const StudentNotePage = () => {
     const fetchNotes = async () => {
       try {
         const res = selectedSubject
-          ? await api.get(`/notes/filter?subjectId=${selectedSubject}`)
-          : await api.get(`/notes/department/${departmentId}`);
+          ? await api.get<NoteStruct[]>(`/notes/filter?subjectId=${selectedSubject}`)
+          : await api.get<NoteStruct[]>(`/notes/department/${departmentId}`);
         setNotes(res.data);
         setError('');
-      } catch (err) {
+      } catch (err:any) {
         setNotes([]);
         setError(selectedSubject ? 'No notes found for the selected subject.' : 'No notes found.');
       }
@@ -50,7 +76,7 @@ const StudentNotePage = () => {
         <select
           className="subject-select"
           value={selectedSubject}
-          onChange={(e) => setSelectedSubject(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedSubject(Number(e.target.value))}
         >
           <option value="">Select Subject</option>
           {subjects.map((subj) => (
@@ -64,10 +90,10 @@ const StudentNotePage = () => {
 
         {notes.length > 0 && (
           <ul className="notes-list">
-            {notes.map((note, index) => (
-              <li key={index} className="note-item">
+            {notes.map((note) => (
+              <li key={note.id} className="note-item">
                 <div>
-                  <strong>{note.description}</strong> ({note.subjects?.name || "Unknown Subject"})<br />
+                  <strong>{note.description}</strong> ({note.subjects.name || "Unknown Subject"})<br />
                   <small className="text-muted">{note.pdfFile}</small>
                 </div>
                 <p>{new Date(note.postedDate).toLocaleDateString()}</p>
