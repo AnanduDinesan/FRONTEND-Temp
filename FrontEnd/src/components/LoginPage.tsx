@@ -7,16 +7,10 @@ interface LoginDetails{
   email: string;
   password: string;
 }
-
-interface ResponseStruct{
+interface ResponseStruct {
   token: string;
-  id: number;
-  name: string;
   role: string;
-  email: string;
-  departmentId: number;
 }
-
 const LoginPage: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);

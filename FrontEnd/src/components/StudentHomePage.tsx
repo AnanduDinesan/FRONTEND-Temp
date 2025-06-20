@@ -13,37 +13,24 @@ interface StudentDetailsStruct{
   role:string;
 }
 
-interface LocalUser{
-  role:string; 
-  name: string;
-  id: string;
-  departmentId: string;
-  email: string;
-}
-
 const StudentHomePage: React.FC = () => {
-
-  const localUserStr = localStorage.getItem('user');
-  const user: LocalUser | null = localUserStr ? JSON.parse(localUserStr) : null;
-  const studentId = user?.id;
 
   const [studentDetails, setStudentDetails] = useState<StudentDetailsStruct | null>(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchStudentDetails = async () => {
-      if (studentId) {
         try {
-          const res = await api.get<StudentDetailsStruct>(`/user/${studentId}`);
+          const res = await api.get<StudentDetailsStruct>(`/user/profile`);
+          console.log("Student Details:", res.data);
           setStudentDetails(res.data);
           setError('');
         } catch (error:any) {
           setError('Failed to fetch student details.');
         }
-      }
-    };
-    fetchStudentDetails();
-  }, [studentId]);
+      };
+      fetchStudentDetails();
+    }, []);
 
   return (
     <div className="student-dashboard">
