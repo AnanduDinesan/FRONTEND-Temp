@@ -14,7 +14,7 @@ body {
 }
 
 /* Sidebar */
-.sidebar {
+/* .sidebar {
   background-color: #1c1f25;
   width: 240px;
   height: 100vh;
@@ -76,10 +76,10 @@ body {
 
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
-}
+} */
 
 /* Header */
-.header {
+/* .header {
   margin-left: 240px;
   background-color: #2d3436;
   padding: 1rem 2rem;
@@ -121,10 +121,10 @@ body {
 
 .logout-button:hover {
   background-color: #c0392b;
-}
+} */
 
 /* Main Dashboard */
-.main {
+/* .main {
   margin-left: 240px;
   padding: 2rem;
 }
@@ -142,10 +142,10 @@ body {
 .main p {
   color: #d1d5db;
   margin-bottom: 1.5rem;
-}
+} */
 
 /* Action Buttons */
-.action-buttons {
+/* .action-buttons {
   display: flex;
   gap: 1rem;
 }
@@ -179,26 +179,26 @@ button.upload {
 
 button.upload:hover {
   background-color: #27ae60;
-} */
+}  */
 
 /* Breadcrumb */
-.breadcrumb {
+/* .breadcrumb {
   margin-bottom: 1rem;
   color: #9ca3af;
   font-size: 0.9rem;
-}
+} */
 
 /* Card Component */
-.card {
+/* .card {
   padding: 2em;
 }
 
 .read-the-docs {
   color: #888;
-}
+} */
 
 /* Logo Animation */
-@keyframes logo-spin {
+/* @keyframes logo-spin {
   from {
     transform: rotate(0deg);
   }
@@ -234,7 +234,7 @@ button:hover {
   opacity: 0.9;
 }
 /* Gradient buttons with glow on hover */
-.btn-gradient-blue {
+/* .btn-gradient-blue {
   background: linear-gradient(to right, #4facfe, #00f2fe);
   color: white;
   border: none;
@@ -258,12 +258,12 @@ button:hover {
 .btn-gradient-green:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 18px rgba(56, 249, 215, 0.6);
-}
+} */
 /* Icon animation */
-.icon-animate {
+/* .icon-animate {
   transition: transform 0.3s ease;
 }
 
 .animated-btn:hover .icon-animate {
   transform: scale(1.2) rotate(8deg);
-}
+} */

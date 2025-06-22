@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
 import Sidebar from './StudentSidebar';
-import '../styling/StudentHomePage.css';
 
 interface StudentDetailsStruct{
   id:string;
@@ -33,10 +32,13 @@ const StudentHomePage: React.FC = () => {
     }, []);
 
   return (
-    <div className="student-dashboard">
+    <div className='flex flex-row min-h-screen w-full'>
+      <div>
       <Sidebar />
-      <div className="home-page-container">
-        <div className="welcome-banner">
+      </div>
+      <div className='flex justify-center'>
+      <div className="flex flex-col items-center shadow-lg m-16 w-4xl bg-white rounded-lg">
+        <div className="text-center mb-8 font-bold mt-10 text-xl">
           <h2> Welcome, {studentDetails?.name || 'Student'}!</h2>
           <p className="subheading">Here’s a quick overview of your profile.</p>
         </div>
@@ -44,14 +46,15 @@ const StudentHomePage: React.FC = () => {
         {error && <p className="error-text">{error}</p>}
 
         {studentDetails && (
-          <div className="student-info-card">
-            <div className="info-row"><span>👤</span> <strong>Name:</strong> {studentDetails.name}</div>
-            <div className="info-row"><span>📧</span> <strong>Email:</strong> {studentDetails.email}</div>
-            <div className="info-row"><span>🏫</span> <strong>Department:</strong> {studentDetails.department.name}</div>
-            <div className="info-row"><span>🎓</span> <strong>Role:</strong> {studentDetails.role}</div>
+          <div className="flex flex-col items-start gap-2 p-4 ml-4 w-full max-w-md text-xl">
+            <div ><span>👤</span> <strong>Name:</strong> {studentDetails.name}</div>
+            <div ><span>📧</span> <strong>Email:</strong> {studentDetails.email}</div>
+            <div ><span>🏫</span> <strong>Department:</strong> {studentDetails.department.name}</div>
+            <div ><span>🎓</span> <strong>Role:</strong> {studentDetails.role}</div>
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 };
