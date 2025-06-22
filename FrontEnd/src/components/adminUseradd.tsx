@@ -1,6 +1,5 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import api from '../api';
-import '../styling/adminUseradd.css';
 import Navbar from './adminNavbar';
 
 // ✅ Interface for user form data

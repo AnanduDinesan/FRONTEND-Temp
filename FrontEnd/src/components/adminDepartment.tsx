@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import api from '../api'; 
-import '../styling/adminDepartment.css';
 import Navbar from './adminNavbar';
 
 interface DepartmentFormData{

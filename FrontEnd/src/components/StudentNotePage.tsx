@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../api';
 import Sidebar from './StudentSidebar';
-import '../styling/StudentNotePage.css';
 
 interface LocalUser{
     role:string; 

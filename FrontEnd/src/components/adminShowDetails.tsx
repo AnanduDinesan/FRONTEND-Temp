@@ -1,5 +1,4 @@
 import { useEffect, useState, ChangeEvent } from 'react';
-import '../styling/adminShowDetails.css';
 import Navbar from './adminNavbar';
 import api from '../api';
 

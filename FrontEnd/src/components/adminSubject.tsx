@@ -1,5 +1,4 @@
 import { useEffect, useState, ChangeEvent, FormEvent } from 'react';
-import '../styling/adminSubject.css';
 import Navbar from './adminNavbar';
 import api from '../api';
 

@@ -1,6 +1,5 @@
 // src/components/Navbar.jsx
 import { Link } from 'react-router-dom';
-import '../styling/adminNavbar.css';
 
 const Navbar = () => {
   return (
