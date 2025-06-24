@@ -1,6 +1,5 @@
 import { useEffect, useState, ChangeEvent } from 'react';
-import Navbar from './adminNavbar';
-import api from '../api';
+import api from '../../api';
 
 // === Interfaces ===
 interface Department {
@@ -14,7 +13,7 @@ interface User {
   email: string;
   role: string;
   department: Department;
-  departmentId?: number; // optional for update
+  departmentId?: number;
 }
 
 interface Subject {
@@ -22,7 +21,7 @@ interface Subject {
   name: string;
   semester: string;
   department: Department;
-  departmentId?: number; // for editing
+  departmentId?: number;
 }
 
 const ShowDetails = () => {
@@ -40,7 +39,12 @@ const ShowDetails = () => {
   const [editingSubjectId, setEditingSubjectId] = useState<number | null>(null);
   const [editedSubject, setEditedSubject] = useState<Partial<Subject>>({});
 
-  // === Fetching ===
+  useEffect(() => {
+    fetchUsers();
+    fetchDepartments();
+    fetchSubjects();
+  }, []);
+
   const fetchUsers = async () => {
     try {
       const res = await api.get<User[]>('/User/all');
@@ -68,13 +72,7 @@ const ShowDetails = () => {
     }
   };
 
-  useEffect(() => {
-    fetchUsers();
-    fetchDepartments();
-    fetchSubjects();
-  }, []);
-
-  // === USER FUNCTIONS ===
+  // User handlers (unchanged)
   const handleDeleteUser = async (id: number) => {
     try {
       await api.delete(`/User/${id}`);
@@ -88,10 +86,7 @@ const ShowDetails = () => {
 
   const handleEditClickUser = (user: User) => {
     setEditingUserId(user.id);
-    setEditedUser({
-      ...user,
-      departmentId: user.department?.id,
-    });
+    setEditedUser({ ...user, departmentId: user.department?.id });
   };
 
   const handleCancelEditUser = () => {
@@ -119,7 +114,7 @@ const ShowDetails = () => {
     }));
   };
 
-  // === DEPARTMENT FUNCTIONS ===
+  // Department handlers (unchanged)
   const handleEditDept = (dept: Department) => {
     setEditingDeptId(dept.id);
     setEditedDeptName(dept.name);
@@ -156,7 +151,7 @@ const ShowDetails = () => {
     }
   };
 
-  // === SUBJECT FUNCTIONS ===
+  // Subject handlers (unchanged)
   const handleEditSubject = (sub: Subject) => {
     setEditingSubjectId(sub.id);
     setEditedSubject({
@@ -205,43 +200,42 @@ const ShowDetails = () => {
     }
   };
 
-  // === TABLE RENDER ===
+  // === RENDER TABLES ===
+  const tableClass = 'w-full text-sm border border-gray-300 rounded-md';
+  const thClass = 'bg-indigo-600 text-white px-4 py-2';
+  const tdClass = 'px-4 py-2 border border-gray-200';
+
   const renderTable = () => {
     if (selectedType === 'users') {
       return (
-        <table className="data-table">
-          <thead>
-            <tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Department</th><th>Edit</th><th>Delete</th></tr>
-          </thead>
+        <table className={tableClass}>
+          <thead><tr><th className={thClass}>Name</th><th className={thClass}>Email</th><th className={thClass}>Role</th><th className={thClass}>Department</th><th className={thClass}>Edit</th><th className={thClass}>Delete</th></tr></thead>
           <tbody>
             {users.map((u) => (
-              <tr key={u.id}>
-                <td>{u.id}</td>
-                <td>{editingUserId === u.id ? <input name="name" value={editedUser.name || ''} onChange={handleInputChangeUser} /> : u.name}</td>
-                <td>{editingUserId === u.id ? <input name="email" value={editedUser.email || ''} onChange={handleInputChangeUser} /> : u.email}</td>
-                <td>{editingUserId === u.id ? (
-                  <select name="role" value={editedUser.role || ''} onChange={handleInputChangeUser}>
+              <tr key={u.id} className="hover:bg-gray-50">
+                <td className={tdClass}>{editingUserId === u.id ? <input name="name" value={editedUser.name || ''} onChange={handleInputChangeUser} className="input" /> : u.name}</td>
+                <td className={tdClass}>{editingUserId === u.id ? <input name="email" value={editedUser.email || ''} onChange={handleInputChangeUser} className="input" /> : u.email}</td>
+                <td className={tdClass}>{editingUserId === u.id ? (
+                  <select name="role" value={editedUser.role || ''} onChange={handleInputChangeUser} className="input">
                     <option value="admin">admin</option>
                     <option value="teacher">teacher</option>
                     <option value="student">student</option>
-                  </select>
-                ) : u.role}</td>
-                <td>{editingUserId === u.id ? (
-                  <select name="departmentId" value={editedUser.departmentId || ''} onChange={handleInputChangeUser}>
+                  </select>) : u.role}</td>
+                <td className={tdClass}>{editingUserId === u.id ? (
+                  <select name="departmentId" value={editedUser.departmentId || ''} onChange={handleInputChangeUser} className="input">
                     {departments.map((d) => (
                       <option key={d.id} value={d.id}>{d.name}</option>
                     ))}
-                  </select>
-                ) : u.department?.name}</td>
-                <td>{editingUserId === u.id ? (
+                  </select>) : u.department?.name}</td>
+                <td className={tdClass}>{editingUserId === u.id ? (
                   <>
-                    <button onClick={handleSaveEditUser}>Save</button>
-                    <button onClick={handleCancelEditUser}>Cancel</button>
+                    <button onClick={handleSaveEditUser} className="btn-primary mr-2">Save</button>
+                    <button onClick={handleCancelEditUser} className="btn-secondary">Cancel</button>
                   </>
                 ) : (
-                  <button onClick={() => handleEditClickUser(u)}>Edit</button>
+                  <button onClick={() => handleEditClickUser(u)} className="btn-primary">Edit</button>
                 )}</td>
-                <td><button onClick={() => handleDeleteUser(u.id)}>Delete</button></td>
+                <td className={tdClass}><button onClick={() => handleDeleteUser(u.id)} className="btn-danger">Delete</button></td>
               </tr>
             ))}
           </tbody>
@@ -251,22 +245,21 @@ const ShowDetails = () => {
 
     if (selectedType === 'departments') {
       return (
-        <table className="data-table">
-          <thead><tr><th>ID</th><th>Name</th><th>Edit</th><th>Delete</th></tr></thead>
+        <table className={tableClass}>
+          <thead><tr><th className={thClass}>Name</th><th className={thClass}>Edit</th><th className={thClass}>Delete</th></tr></thead>
           <tbody>
             {departments.map((d) => (
-              <tr key={d.id}>
-                <td>{d.id}</td>
-                <td>{editingDeptId === d.id ? <input value={editedDeptName} onChange={(e) => setEditedDeptName(e.target.value)} /> : d.name}</td>
-                <td>{editingDeptId === d.id ? (
+              <tr key={d.id} className="hover:bg-gray-50">
+                <td className={tdClass}>{editingDeptId === d.id ? <input value={editedDeptName} onChange={(e) => setEditedDeptName(e.target.value)} className="input" /> : d.name}</td>
+                <td className={tdClass}>{editingDeptId === d.id ? (
                   <>
-                    <button onClick={handleSaveDeptEdit}>Save</button>
-                    <button onClick={handleCancelDeptEdit}>Cancel</button>
+                    <button onClick={handleSaveDeptEdit} className="btn-primary mr-2">Save</button>
+                    <button onClick={handleCancelDeptEdit} className="btn-secondary">Cancel</button>
                   </>
                 ) : (
-                  <button onClick={() => handleEditDept(d)}>Edit</button>
+                  <button onClick={() => handleEditDept(d)} className="btn-primary">Edit</button>
                 )}</td>
-                <td><button onClick={() => handleDeleteDept(d.id)}>Delete</button></td>
+                <td className={tdClass}><button onClick={() => handleDeleteDept(d.id)} className="btn-danger">Delete</button></td>
               </tr>
             ))}
           </tbody>
@@ -276,32 +269,28 @@ const ShowDetails = () => {
 
     if (selectedType === 'subjects') {
       return (
-        <table className="data-table">
-          <thead><tr><th>ID</th><th>Name</th><th>Department</th><th>Semester</th><th>Edit</th><th>Delete</th></tr></thead>
+        <table className={tableClass}>
+          <thead><tr><th className={thClass}>Name</th><th className={thClass}>Department</th><th className={thClass}>Semester</th><th className={thClass}>Edit</th><th className={thClass}>Delete</th></tr></thead>
           <tbody>
             {subjects.map((sub) => (
-              <tr key={sub.id}>
-                <td>{sub.id}</td>
-                <td>{editingSubjectId === sub.id ? <input name="name" value={editedSubject.name || ''} onChange={handleInputChangeSubject} /> : sub.name}</td>
-                <td>{editingSubjectId === sub.id ? (
-                  <select name="departmentId" value={editedSubject.departmentId || ''} onChange={handleInputChangeSubject}>
+              <tr key={sub.id} className="hover:bg-gray-50">
+                <td className={tdClass}>{editingSubjectId === sub.id ? <input name="name" value={editedSubject.name || ''} onChange={handleInputChangeSubject} className="input" /> : sub.name}</td>
+                <td className={tdClass}>{editingSubjectId === sub.id ? (
+                  <select name="departmentId" value={editedSubject.departmentId || ''} onChange={handleInputChangeSubject} className="input">
                     {departments.map((d) => (
                       <option key={d.id} value={d.id}>{d.name}</option>
                     ))}
-                  </select>
-                ) : sub.department?.name}</td>
-                <td>{editingSubjectId === sub.id ? (
-                  <input name="semester" value={editedSubject.semester || ''} onChange={handleInputChangeSubject} />
-                ) : sub.semester}</td>
-                <td>{editingSubjectId === sub.id ? (
+                  </select>) : sub.department?.name}</td>
+                <td className={tdClass}>{editingSubjectId === sub.id ? <input name="semester" value={editedSubject.semester || ''} onChange={handleInputChangeSubject} className="input" /> : sub.semester}</td>
+                <td className={tdClass}>{editingSubjectId === sub.id ? (
                   <>
-                    <button onClick={handleSaveSubjectEdit}>Save</button>
-                    <button onClick={handleCancelSubjectEdit}>Cancel</button>
+                    <button onClick={handleSaveSubjectEdit} className="btn-primary mr-2">Save</button>
+                    <button onClick={handleCancelSubjectEdit} className="btn-secondary">Cancel</button>
                   </>
                 ) : (
-                  <button onClick={() => handleEditSubject(sub)}>Edit</button>
+                  <button onClick={() => handleEditSubject(sub)} className="btn-primary">Edit</button>
                 )}</td>
-                <td><button onClick={() => handleDeleteSubject(sub.id)}>Delete</button></td>
+                <td className={tdClass}><button onClick={() => handleDeleteSubject(sub.id)} className="btn-danger">Delete</button></td>
               </tr>
             ))}
           </tbody>
@@ -313,22 +302,24 @@ const ShowDetails = () => {
   };
 
   return (
-    <>
-      <Navbar />
-      <div className="show-details-container">
-        <h2 className="show-details-header">Show Details</h2>
-        <div className="section">
-          <label htmlFor="dataSelector"><b>Select Category:</b></label>
-          <select id="dataSelector" value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
-            <option value="">-- Choose an option --</option>
-            <option value="users">Users</option>
-            <option value="departments">Departments</option>
-            <option value="subjects">Subjects</option>
-          </select>
-          {selectedType && <div className="data-table-container">{renderTable()}</div>}
-        </div>
+    <div className="max-w-7xl mx-auto px-4 py-10">
+      <h2 className="text-3xl font-semibold text-center mb-8 text-gray-800">Show Details</h2>
+      <div className="mb-6">
+        <label className="block mb-2 text-gray-700 font-medium">Select Category:</label>
+        <select
+          id="dataSelector"
+          value={selectedType}
+          onChange={(e) => setSelectedType(e.target.value)}
+          className="w-64 px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring focus:ring-indigo-300"
+        >
+          <option value="">-- Choose an option --</option>
+          <option value="users">Users</option>
+          <option value="departments">Departments</option>
+          <option value="subjects">Subjects</option>
+        </select>
       </div>
-    </>
+      {selectedType && <div className="overflow-x-auto">{renderTable()}</div>}
+    </div>
   );
 };
 

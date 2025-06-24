@@ -79,13 +79,13 @@ const LoginPage: React.FC = () => {
         />
 
         {error && (
-          <p className="text-red-600 text-center text-lg text-shadow-lg font-medium">{error}</p>
+          <p className="text-red-600 text-center text-lg font-medium">{error}</p>
         )}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-semibold transition-all duration-300 disabled:opacity-50"
+          className="w-full bg-[#082d6c] hover:bg-[#2653a0e4] text-white py-2 rounded-md font-semibold transition-all duration-300 disabled:opacity-50"
         >
           {loading ? 'Loading...' : 'Login'}
         </button>
