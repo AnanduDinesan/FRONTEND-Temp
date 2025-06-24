@@ -7,10 +7,7 @@ interface LoginDetails {
   email: string;
   password: string;
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> f95ee7b632ea11637f54fc5bbf92af278b73e97a
 interface ResponseStruct {
   token: string;
   role: string;
@@ -39,11 +36,7 @@ const LoginPage: React.FC = () => {
     try {
       const response = await api.post<ResponseStruct>('auth/login', formData);
       console.log(response.data);
-<<<<<<< HEAD
-      const { role, name, id, departmentId, email } = response.data;
-=======
       const role:string = response.data.role;
->>>>>>> f95ee7b632ea11637f54fc5bbf92af278b73e97a
 
       localStorage.setItem('jwt', response.data.token);
 
@@ -100,53 +93,6 @@ const LoginPage: React.FC = () => {
         </button>
       </form>
     </div>
-    // <div className="flex items-center">
-
-    //   <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-    //     <form
-    //       onSubmit={handleLogin}
-    //       className="bg-white shadow-lg rounded-xl p-6 w-full max-w-sm"
-    //       >
-    //       <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-    //         Login
-    //       </h2>
-
-    //       <input
-    //         type="email"
-    //         placeholder="Email"
-    //         name="email"
-    //         value={formData.email}
-    //         onChange={handleChange}
-    //         required
-    //         className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-    //         />
-
-    //       <input
-    //         type="password"
-    //         placeholder="Password"
-    //         name="password"
-    //         value={formData.password}
-    //         onChange={handleChange}
-    //         required
-    //         className="w-full px-4 py-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-    //         />
-
-    //       {error && (
-    //         <p className="text-red-500 text-sm mb-4">{error}</p>
-    //       )}
-
-    //       <button
-    //         type="submit"
-    //         disabled={loading}
-    //         className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition disabled:opacity-50"
-    //         >
-    //         {loading ? 'Loading...' : 'Login'}
-    //       </button>
-    //     </form>
-    //   </div>
-    // </div>
-
-
   );
 };
 
