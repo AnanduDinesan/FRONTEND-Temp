@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -70,3 +71,6 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 } */
+=======
+@import "tailwindcss";
+>>>>>>> f95ee7b632ea11637f54fc5bbf92af278b73e97a
