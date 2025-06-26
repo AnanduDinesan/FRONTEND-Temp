@@ -15,6 +15,7 @@ import User from './components/Admin/adminUseradd';
 import Subject from './components/Admin/adminSubject';
 import ShowDetails from './components/Admin/adminShowDetails';
 import MainLayout from "./components/Admin/adminLayout";
+import StudentLayout from "./components/Student/StudentLayOut";
 
 function App() {
   return (
@@ -28,9 +29,11 @@ function App() {
           <Route path="/subject" element={<Subject />} />
           <Route path="/showdetails" element={<ShowDetails />} />
         </Route>
-        <Route path="/student" element={<StudentHomePage />} />
-        <Route path="/student-marks" element={<StudentMarkPage />} />
-        <Route path="/student-notes" element={<StudentNotePage />} />
+        <Route element={<StudentLayout />}>
+          <Route path="/student" element={<StudentHomePage />} />
+          <Route path="/student-marks" element={<StudentMarkPage />} />
+          <Route path="/student-notes" element={<StudentNotePage />} />
+        </Route>
         <Route path="/teacher" element={<HomePage />} />
         <Route path="/homePage" element={<HomePage />} />
         <Route path="/uploadMarks" element={<UploadMarks />} />

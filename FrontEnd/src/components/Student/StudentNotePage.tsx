@@ -55,8 +55,6 @@ const StudentNotePage: React.FC = () => {
 
   return (
     <div className="flex min-h-screen w-full">
-      <Sidebar />
-
       <div className="flex flex-col flex-grow items-center bg-gray-50 px-6 py-10">
         <div className="bg-white rounded-xl shadow-xl p-8 w-full max-w-4xl">
           <h2 className="text-3xl font-bold text-center text-[#082d6c] mb-6">Download Notes</h2>

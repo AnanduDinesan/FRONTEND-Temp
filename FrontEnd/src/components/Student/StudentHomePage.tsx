@@ -33,9 +33,6 @@ const StudentHomePage: React.FC = () => {
 
   return (
     <div className='flex flex-row min-h-screen w-full'>
-      <div>
-        <Sidebar />
-      </div>
       <div className='flex justify-center w-full'>
         <div className="flex flex-col items-center shadow-xl border border-gray-200 m-16 w-4xl bg-white rounded-lg hover:-translate-y-1 transition-all duration-200">
           <div className="text-center mb-8 font-bold mt-10 text-xl">

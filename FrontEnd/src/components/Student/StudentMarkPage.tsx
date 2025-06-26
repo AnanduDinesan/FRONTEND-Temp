@@ -66,9 +66,6 @@ const StudentMarkPage :React.FC = () => {
 
     return (
         <div className="flex flex-row min-h-screen w-full">
-            <div>
-                <Sidebar />
-            </div>
             <div className='flex justify-center w-full'>
                 <div className="flex flex-col items-center shadow-xl border border-gray-200 p-8 m-16 w-4xl bg-white rounded-lg">
                     <h2 className='text-2xl font-bold'>Your Marks</h2>
